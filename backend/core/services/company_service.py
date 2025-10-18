@@ -32,7 +32,7 @@ class CompanyService:
 
     async def update_company(self, company_id: int, data: CompanyUpdateDTO) -> CompanyDTO:
         company = await self.company_repository.get_item(company_id)
-        if company:
+        if not company:
             raise CompanyNotFoundError()
         if data.icon:
             data.icon = await self.aws_client.upload_one_file(data.icon, f"companies/{uuid4()}")
@@ -41,7 +41,7 @@ class CompanyService:
 
     async def delete_company(self, company_id: int) -> bool:
         company = await self.company_repository.get_item(company_id)
-        if company:
+        if not company:
             raise CompanyNotFoundError()
             
         if company.icon_url:
