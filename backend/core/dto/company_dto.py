@@ -1,8 +1,8 @@
+
 from fastapi import Form, UploadFile
 from pydantic import BaseModel
 
 from backend.core.dto.application import CandidateCardDTO
-
 
 class CompanyDTO(BaseModel):
     id: int
@@ -23,3 +23,6 @@ class CompanyUpdateDTO(BaseModel):
     icon: UploadFile | None = Form(None)
     site_url: str | None = Form(None)
     industry: str | None = Form(None)
+    
+
+KanbanColumnDTO.model_rebuild()

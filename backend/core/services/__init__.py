@@ -5,4 +5,5 @@ from backend.core.services.tag_service import TagService
 from backend.core.services.company_service import CompanyService
 from backend.core.services.application_service import ApplicationService
 from backend.core.services.student_service import StudentService
+from backend.core.services.collective_application_service import CollectiveApplicationService
 from backend.core.services.university_service import UniversityService

@@ -66,6 +66,12 @@ class RequestProvider(Provider):
         )
 
     @provide(scope=Scope.REQUEST)
+    async def get_collective_application_service(self, session: AsyncSession) -> services.CollectiveApplicationService:
+        return services.CollectiveApplicationService(
+            collective_application_repository=repositories.CollectiveApplicationRepository(session)
+        )
+
+    @provide(scope=Scope.REQUEST)
     async def get_university_service(self, session: AsyncSession) -> services.UniversityService:
         return services.UniversityService(
             university_repository=repositories.UniversityRepository(session)

@@ -8,6 +8,7 @@ from backend.infrastructure.database.models.base import Base
 if TYPE_CHECKING:
     from backend.infrastructure.database.models.university import University
     from backend.infrastructure.database.models.application import Application
+    from backend.infrastructure.database.models.tag import Tag
 
 
 class Student(Base):
@@ -25,5 +26,5 @@ class Student(Base):
 
     university: Mapped["University"] = relationship(back_populates="students")
     applications: Mapped[list["Application"]] = relationship(back_populates="student")
-
+    tags: Mapped[list["Tag"]] = relationship(secondary="student_tags", back_populates="students")
     

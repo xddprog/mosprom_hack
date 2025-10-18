@@ -79,10 +79,3 @@ async def update_vacancy(
     if data.tags:
         data.tags = await tag_service.get_tags(data.tags)
     return await service.update_vacancy(vacancy_id, data, user.company_id)
-
-
-
-# @router.get("/{vacancy_id}", response_model=VacancyDTO)
-# @inject  
-# async def get_vacancy(vacancy_id: int, service: FromDishka[VacancyService]):
-#     return await service.get_vacancy(vacancy_id)

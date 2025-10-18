@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from backend.infrastructure.database.models.application import Application
     from backend.infrastructure.database.models.student import Student
     from backend.infrastructure.database.models.user import User
+    from backend.infrastructure.database.models.collective_application import CollectiveApplication
 
 
 class University(Base):
@@ -18,3 +19,4 @@ class University(Base):
     students: Mapped[list["Student"]] = relationship(back_populates="university")
     users: Mapped[list["User"]] = relationship(back_populates="university")
     applications: Mapped[list["Application"]] = relationship(back_populates="university")
+    collective_applications: Mapped[list["CollectiveApplication"]] = relationship(back_populates="university")

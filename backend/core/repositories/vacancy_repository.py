@@ -13,8 +13,8 @@ class VacancyRepository(SqlAlchemyRepository[Vacancy]):
 
     async def get_all(
         self, 
-        limit: int, 
-        offset: int,
+        limit: int | None = None, 
+        offset: int | None = None,
         region: str | None = None,
         experiences: list[ExperienceLevel] | None = None,
         min_salary: int | None = None,

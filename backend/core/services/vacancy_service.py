@@ -14,8 +14,8 @@ class VacancyService:
         vacancy = await self.vacancy_repository.add_item(**data.model_dump(exclude_unset=True), company_id=company_id)
         return VacancyFromCompanyDTO.model_validate(vacancy, from_attributes=True)
     
-    async def get_vacancies(self, limit: int, offset: int, filters: VacancyFilters):
-        vacancies = await self.vacancy_repository.get_all(limit=limit, offset=offset, **filters.model_dump())
+    async def get_vacancies(self, filters: VacancyFilters):
+        vacancies = await self.vacancy_repository.get_all(**filters.model_dump(exclude={"limit", "offset"}))
         return [VacancyPublicDTO.model_validate(vacancy, from_attributes=True) for vacancy in vacancies]
 
     async def get_vacancies_from_company(self, filters: VacancyFilters):

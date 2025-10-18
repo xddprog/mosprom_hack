@@ -9,7 +9,6 @@ class Role(str, Enum):
     ADMIN = "Admin"
 
 
-
 class ApplicationStatus(str, Enum):
     ON_REVIEW = "on_review"
     SCREENING = "screening"
@@ -30,3 +29,15 @@ class WorkFormat(str, Enum):
     REMOTE = "Remote"
     OFFICE = "Office"
     HYBRID = "Hybrid"
+
+
+class GroupApplicationStatus(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+
+class CollectiveApplicationStatus(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"

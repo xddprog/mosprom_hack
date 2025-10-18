@@ -7,7 +7,7 @@ class UniversityRepository(SqlAlchemyRepository[University]):
     def __init__(self, session):
         super().__init__(session, University)
 
-    async def get_all(self, name: str | None = None, limit: int = 20, offset: int = 0) -> list[University]:
+    async def get_all(self, name: str | None = None, limit: int | None = None, offset: int | None = None) -> list[University]:
         query = select(self.model)
         if name:
             query = query.where(University.name.ilike(f"%{name}%"))

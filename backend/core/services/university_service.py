@@ -7,4 +7,7 @@ class UniversityService:
 
     async def get_universities(self, name: str | None = None, limit: int = 20, offset: int = 0) -> list[UniversityDTO]:
         universities = await self.university_repository.get_all(name, limit, offset)
-        return [UniversityDTO.model_validate(university, from_attributes=True) for university in universities]
+        return [
+            UniversityDTO.model_validate(university, from_attributes=True) 
+            for university in universities
+        ]

@@ -28,9 +28,9 @@ async def get_vacancies(
     is_internship: bool = False,
 ) -> list[VacancyPublicDTO]:
     return await vacancy_service.get_vacancies(
-        limit=limit, 
-        offset=offset,
-        filters=VacancyFilters(
+        VacancyFilters(
+            limit=limit,
+            offset=offset,
             region=region,
             experiences=experiences,
             min_salary=min_salary,

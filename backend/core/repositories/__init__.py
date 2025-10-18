@@ -5,3 +5,4 @@ from backend.core.repositories.company_repository import CompanyRepository
 from backend.core.repositories.application_repository import ApplicationRepository
 from backend.core.repositories.student_repository import StudentRepository
 from backend.core.repositories.university_repository import UniversityRepository
+from backend.core.repositories.collective_application_repository import CollectiveApplicationRepository

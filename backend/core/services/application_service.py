@@ -49,3 +49,14 @@ class ApplicationService:
         if not application:
             raise ApplicationNotFoundError()
         return CandidateCardDTO.model_validate(application, from_attributes=True)
+
+    async def create_students_applications(self, student_ids: list[int], vacancy_id: int, university_id: int) -> None:
+        for student_id in student_ids:
+            await self.repository.add_item(
+                student_id=student_id,
+                vacancy_id=vacancy_id,
+                university_id=university_id,
+            )
+        return JSONResponse(
+            content={"message": "Вы успешно подали заявки на вакансию."}
+        )
