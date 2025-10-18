@@ -14,7 +14,7 @@ from backend.infrastructure.database.models.university import University
 # from backend.infrastructure.database.models.university import University
 
 UNIVERSITY_API_URL = "https://api.gigdata.ru/api/v2/suggest/educations"
-API_KEY = "gayispt9yitlnzu9irwbbwvokd6t6jcfh6mmoybm"
+API_KEY = "tqxccbn7lxjk4jqhuzrfh353f4cjtba0jkdeuozo"
 
 LETTERS = [chr(c) for c in range(ord("а"), ord("я") + 1)]
 
@@ -40,9 +40,7 @@ async def fetch_suggestions(session: aiohttp.ClientSession, letter: str) -> List
     
 
 async def load_universities(db_session: AsyncSession):
-    # check_exist = (await db_session.execute(select(University).limit(1))).scalar_one_or_none()
-    # if check_exist:
-    check_exist = False
+    check_exist = (await db_session.execute(select(University).limit(1))).scalar_one_or_none()
     if check_exist:
         return
     
@@ -60,36 +58,3 @@ async def load_universities(db_session: AsyncSession):
     for university in set(clean_whitespace(name) for name in seen_names):
         db_session.add(University(name=university))
     await db_session.commit()
-
-
-
-# --- ДАННЫЕ ДЛЯ ГЕНЕРАЦИИ ---
-COMPANY_NAMES = [
-    "Квантовые Системы", "Нейро-Инновации", "БиоТех Решения",
-    "Аэрокосмические Технологии", "ФинТех Стандарт", "ЭкоЭнерго Пром",
-    "Роботикс Лаб", "Цифровой Горизонт", "МедТех Прогресс", "НаноКомпозит"
-]
-
-INDUSTRIES = [
-    "IT, Разработка ПО", "Биотехнологии", "Финансы", "Аэрокосмическая промышленность",
-    "Энергетика", "Робототехника", "Медицинское оборудование", "Материаловедение"
-]
-
-async def seed_data(session: AsyncSession = None):
-    companies_to_insert = []
-    
-    # Генерируем данные для 10 компаний
-    for i in range(10):
-        name = COMPANY_NAMES[i]
-        domain = name.lower().replace(" ", "").replace("-", "") + ".dev"
-        
-        company_data = {
-            "name": name,
-            "icon_url": f"/static/icons/company_{i+1}.png",
-            "industry": random.choice(INDUSTRIES),
-            "site_url": f"https://{domain}"
-        }
-        companies_to_insert.append(company_data)
-        
-        session.add(Company(**company_data))
-        print("Данные успешно добавлены!")
