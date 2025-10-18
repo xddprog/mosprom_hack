@@ -46,8 +46,8 @@ async def refresh_token(
     auth_service: FromDishka[services.AuthService]
 ):
     refresh_token = request.cookies.get("refresh_token")
-    user = await auth_service.verify_token(refresh_token)
-    access_token = await auth_service.create_access_token(user.email)
+    user, payload = await auth_service.verify_token(refresh_token)
+    access_token = await auth_service.create_access_token(user)
     await set_cookie_tokens(access_token, refresh_token, response)
     
 
