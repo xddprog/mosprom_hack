@@ -3,7 +3,7 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import inject
 from fastapi import APIRouter, Depends, Request, Response
 
-from backend.api.dependency.providers.request import COMPANY_PROTECTED
+from backend.api.dependency.providers.request import COMPANY_PROTECTED, require_role
 from backend.core import services
 from backend.core.dto.auth_dto import LoginForm, RegisterForm
 from backend.core.dto.user_dto import BaseUserModel
@@ -21,7 +21,7 @@ async def set_cookie_tokens(access_token: str, refresh_token: str, response: Res
 @router.get("/current_user")
 @inject
 async def get_current_user(
-    current_user: Annotated[BaseUserModel, Depends(COMPANY_PROTECTED)],
+    current_user: Annotated[BaseUserModel, Depends(require_role([Role.COMPANY, Role.UNIVERSITY, Role.ADMIN]))],
 ) -> BaseUserModel:
     return current_user
 
