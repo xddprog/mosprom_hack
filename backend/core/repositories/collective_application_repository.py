@@ -18,8 +18,8 @@ class CollectiveApplicationRepository(SqlAlchemyRepository[CollectiveApplication
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def get_all(self, university_id: int, limit: int | None = None, offset: int | None = None) -> list[CollectiveApplication]:
-        query = select(CollectiveApplication).where(CollectiveApplication.university_id == university_id)
+    async def get_all(self, limit: int | None = None, offset: int | None = None) -> list[CollectiveApplication]:
+        query = select(CollectiveApplication)
         if limit:
             query = query.limit(limit)
         if offset:

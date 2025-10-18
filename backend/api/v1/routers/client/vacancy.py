@@ -1,7 +1,7 @@
 from aiohttp.web_app import Application
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Form, Query
 
 from backend.core.dto.application import ApplicationCreateDTO
 from backend.core.dto.vacancy_dto import VacancyFilters, VacancyFromCompanyDTO, VacancyPublicDTO
@@ -48,7 +48,7 @@ async def create_application_for_vacancy(
     vacancy_id: int,
     vacancy_service: FromDishka[VacancyService],
     application_service: FromDishka[ApplicationService],
-    form: ApplicationCreateDTO = Depends(),
+    form: ApplicationCreateDTO = Form(),
 ) -> VacancyPublicDTO:
     await vacancy_service.check_vacancy_exists(vacancy_id)
     return await application_service.create_application(form, vacancy_id)

@@ -44,9 +44,7 @@ class CreateCollectiveApplicationDTO(BaseModel):
 
 
 class CreateCollectiveApplicationBookingDTO(BaseModel):
-    collective_application_id: int
-    company_id: int
-    booked_count: int
+    booked_count: int = Field(..., ge=1)
     comment: str | None
 
 

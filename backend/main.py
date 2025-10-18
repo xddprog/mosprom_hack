@@ -12,6 +12,7 @@ from backend.api.v1.routers.client import client_v1_router
 from backend.api.v1.routers.company import company_v1_router
 from backend.api.v1.routers.university import university_v1_router
 from backend.api.v1.routers.auth import auth_v1_router
+from backend.api.v1.routers.applications import applications_v1_router
 from backend.infrastructure.database.connection.postgres_connection import DatabaseConnection
 
 
@@ -47,6 +48,7 @@ app.include_router(client_v1_router)
 app.include_router(company_v1_router)
 app.include_router(university_v1_router)
 app.include_router(auth_v1_router)
+app.include_router(applications_v1_router)
 
 
 @app.exception_handler(RequestValidationError)

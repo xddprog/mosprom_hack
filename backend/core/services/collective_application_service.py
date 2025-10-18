@@ -20,9 +20,8 @@ class CollectiveApplicationService:
             raise CollectiveApplicationNotFoundError()
         return CollectiveApplicationWithBookingsDTO.model_validate(collective_application, from_attributes=True)
 
-    async def get_all_collective_applications(self, university_id: int, limit: int, offset: int) -> list[CollectiveApplicationDTO]:
+    async def get_all_collective_applications(self, limit: int, offset: int) -> list[CollectiveApplicationDTO]:
         collective_applications = await self.collective_application_repository.get_all(
-            university_id=university_id,
             limit=limit,
             offset=offset,
         )

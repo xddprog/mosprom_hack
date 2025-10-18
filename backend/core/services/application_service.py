@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from fastapi.responses import JSONResponse
 from backend.core.clients.aws_client import AWSClient
-from backend.core.dto.application import ApplicationCreateDTO, CandidateCardDTO
+from backend.core.dto.application import ApplicationCreateDTO, CandidateCardDTO, CollectiveApplicationBookingDTO, CreateCollectiveApplicationBookingDTO
 from backend.core.dto.company_dto import KanbanColumnDTO
 from backend.core.repositories.application_repository import ApplicationRepository
 from backend.infrastructure.database.models.application import Application
@@ -57,6 +57,18 @@ class ApplicationService:
                 vacancy_id=vacancy_id,
                 university_id=university_id,
             )
-        return JSONResponse(
-            content={"message": "Вы успешно подали заявки на вакансию."}
+        return JSONResponse(content={"message": "Вы успешно подали заявки на вакансию."})
+
+    async def create_collective_application_booking(
+        self, 
+        company_id: int, 
+        collective_application_id: int, 
+        data: CreateCollectiveApplicationBookingDTO
+    ) -> CollectiveApplicationBookingDTO:
+        collective_application_booking = await self.repository.add_item(
+            collective_application_id=collective_application_id,
+            company_id=company_id,
+            booked_count=data.booked_count,
+            comment=data.comment
         )
+        return CollectiveApplicationBookingDTO.model_validate(collective_application_booking, from_attributes=True)
