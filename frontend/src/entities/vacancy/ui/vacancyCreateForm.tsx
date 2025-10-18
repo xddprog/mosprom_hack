@@ -1,27 +1,51 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
-import { FormField, FormItem } from "@/shared/ui/form/form";
 import {
-  X,
-  CircleAlert,
-  Plus,
-  Tags,
-  CheckSquare,
-  ClipboardList,
-  Briefcase,
-} from "lucide-react";
+  FormField,
+  FormItem,
+  FormMessage,
+  FormLabel,
+} from "@/shared/ui/form/form";
+import { X, CircleAlert, Plus } from "lucide-react";
 import { FloatingLabelInput } from "@/shared/ui/input/floatingInputLabel";
 import { cn } from "@/shared/lib/utils/twMerge";
 import {
   VacancyFormData,
   VacancyFormSchema,
+  WorkFormatEnum,
+  ExperienceLevelEnum,
 } from "../lib/schemes/createFormSchema";
 import { useCreateVacancy } from "../hooks/useCreateVacancy";
-import { FormCard } from "@/widgets/formCard/ui/formCard";
+
+const ToggleButtonGroup: React.FC<{
+  options: { value: string; label: string }[];
+  value: string | undefined;
+  onChange: (value: string) => void;
+  name: string;
+  error?: string;
+}> = ({ options, value, onChange, error }) => (
+  <div className="flex flex-wrap gap-2 mt-2">
+    {options.map((option) => (
+      <Button
+        key={option.value}
+        type="button"
+        variant={value === option.value ? "default" : "outline"}
+        onClick={() => onChange(option.value)}
+        className={cn(
+          "rounded-full px-4 py-2 text-sm font-medium",
+          value === option.value
+            ? "bg-red-500 text-white hover:bg-red-600"
+            : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
+        )}
+      >
+        {option.label}
+      </Button>
+    ))}
+    {error && <p className="text-red-800 text-xs px-3 mt-1 w-full">{error}</p>}
+  </div>
+);
 
 export const VacancyCreateForm = () => {
   const { mutate: createVacancy } = useCreateVacancy();
@@ -30,13 +54,16 @@ export const VacancyCreateForm = () => {
     defaultValues: {
       region: "",
       post: "",
-      salary: "",
-      tags: [],
-      responsibilities: { title: "Обязанности", description: [] },
-      requirements: { title: "Требования", description: [] },
+      salaryFrom: undefined,
+      salaryTo: undefined,
+      workFormat: undefined,
+      experience: undefined,
+      keywords: "",
+      responsibilities: [""],
+      requirements: [""],
     },
+    mode: "onChange",
   });
-  const [currentTag, setCurrentTag] = useState("");
 
   const {
     control,
@@ -46,280 +73,319 @@ export const VacancyCreateForm = () => {
     watch,
   } = form;
 
-  const tags = watch("tags");
+  const responsibilities = watch("responsibilities");
+  const requirements = watch("requirements");
 
-  const addTag = () => {
-    if (currentTag.trim()) {
-      setValue("tags", [...tags, currentTag.trim()]);
-      setCurrentTag("");
-    }
+  const workFormatOptions = [
+    { value: WorkFormatEnum.enum.office, label: "Офис" },
+    { value: WorkFormatEnum.enum.remote, label: "Удаленно" },
+    { value: WorkFormatEnum.enum.hybrid, label: "Гибрид" },
+  ];
+
+  const experienceOptions = [
+    {
+      value: ExperienceLevelEnum.enum.not_important,
+      label: "Не имеет значения",
+    },
+    { value: ExperienceLevelEnum.enum.no_experience, label: "Без опыта" },
+    { value: ExperienceLevelEnum.enum["1_to_3_years"], label: "От 1 до 3" },
+    { value: ExperienceLevelEnum.enum["3_to_6_years"], label: "От 3 до 6" },
+    { value: ExperienceLevelEnum.enum.more_than_6_years, label: "Более 6" },
+  ];
+
+  const addDescriptionField = (
+    section: "responsibilities" | "requirements"
+  ) => {
+    const currentDescriptions = watch(section);
+    setValue(section, [...currentDescriptions, ""]);
   };
 
-  const removeTag = (index: number) => {
-    setValue(
-      "tags",
-      tags.filter((_, i) => i !== index)
-    );
-  };
-
-  const addDescription = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const section = event.currentTarget.value as
-      | "responsibilities"
-      | "requirements";
-    if (!section) return;
-    const currentDescriptions = watch(`${section}.description`);
-    setValue(`${section}.description`, [...currentDescriptions, ""]);
-  };
-
-  const removeDescription = (
+  const removeDescriptionField = (
     section: "responsibilities" | "requirements",
     index: number
   ) => {
-    const currentDescriptions = watch(`${section}.description`);
+    const currentDescriptions = watch(section);
     setValue(
-      `${section}.description`,
+      section,
       currentDescriptions.filter((_, i) => i !== index)
     );
   };
 
   const onSubmit = (data: VacancyFormData) => {
-    createVacancy({
+    console.log("Отправка данных:", data);
+
+    const payload = {
       company_id: "vtb-company",
       is_favorite: false,
       post: data.post,
-      salary: data.salary,
-      tags: data.tags,
+      salary:
+        data.salaryFrom && data.salaryTo
+          ? `${data.salaryFrom} - ${data.salaryTo} руб.`
+          : data.salaryFrom
+          ? `от ${data.salaryFrom} руб.`
+          : data.salaryTo
+          ? `до ${data.salaryTo} руб.`
+          : "",
+      work_format: data.workFormat,
+      experience_level: data.experience,
       region: data.region,
-      requirements: {
-        description: data.requirements.description.filter(Boolean) as string[],
-        title: data.requirements.title ?? "Требования",
-      },
+      keywords: data.keywords
+        ? data.keywords
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        : [],
       responsibilities: {
-        description: data.responsibilities.description.filter(
-          Boolean
-        ) as string[],
-        title: data.responsibilities.title ?? "Обязанности",
+        title: "Обязанности",
+        description: data.responsibilities.filter(Boolean),
       },
-    });
+      requirements: {
+        title: "Требования",
+        description: data.requirements.filter(Boolean),
+      },
+    };
+    console.log("Payload для бэкенда:", payload);
+
     form.reset();
   };
 
   return (
-    <div className="rounded-lg">
+    <div>
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <FormCard
-              title="Основная информация"
-              icon={<Briefcase className="w-6 h-6" />}
-              description="Заполните основные детали о вакансии."
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={control}
-                  name="post"
-                  render={({ field }) => (
-                    <FormItem className="relative gap-1">
-                      <FloatingLabelInput
-                        {...field}
-                        label="Название должности"
-                        className={cn(
-                          "py-1.5 text-white bg-neutral-900 rounded-xl shadow-sm border-neutral-800 focus:border-blue-500",
-                          errors.post && "border-red-700"
-                        )}
-                      />
-                      {errors.post && (
-                        <span className="text-red-800 text-xs px-3 mt-1 block">
-                          {errors.post.message}
-                        </span>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-6 max-h-[630px] overflow-auto"
+        >
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <FormField
+                control={control}
+                name="post"
+                render={({ field }) => (
+                  <FormItem className="relative md:col-span-2">
+                    <FloatingLabelInput
+                      {...field}
+                      label="Название должности*"
+                      className={cn(
+                        "py-1.5 text-black bg-[#f0f3f7] rounded-xl shadow-sm border-[#f0f3f7] focus:border-red-500",
+                        errors.post && "border-red-700"
                       )}
-                      {field.value && !errors.post && (
-                        <button
-                          type="button"
-                          className="absolute right-4 top-4.5 text-blue-500 cursor-pointer"
-                          onClick={() => field.onChange("")}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                      {errors.post && (
-                        <CircleAlert className="absolute right-4 top-4.5 text-red-700 w-4 h-4" />
-                      )}
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="region"
-                  render={({ field }) => (
-                    <FormItem className="relative gap-1">
-                      <FloatingLabelInput
-                        {...field}
-                        label="Регион"
-                        className={cn(
-                          "py-1.5 text-white bg-neutral-900 rounded-xl shadow-sm border-neutral-800 focus:border-blue-500",
-                          errors.region && "border-red-700"
-                        )}
-                      />
-                      {errors.region && (
-                        <span className="text-red-800 text-xs px-3 mt-1 block">
-                          {errors.region.message}
-                        </span>
-                      )}
-                      {field.value && !errors.region && (
-                        <button
-                          type="button"
-                          className="absolute right-4 top-4.5 text-blue-500 cursor-pointer"
-                          onClick={() => field.onChange("")}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                      {errors.region && (
-                        <CircleAlert className="absolute right-4 top-4.5 text-red-700 w-4 h-4" />
-                      )}
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={control}
-                  name="salary"
-                  render={({ field }) => (
-                    <FormItem className="relative gap-1 md:col-span-2">
-                      <FloatingLabelInput
-                        {...field}
-                        label="Зарплата (пример: 100000 - 150000 руб)"
-                        className={cn(
-                          "py-1.5 text-white bg-neutral-900 rounded-xl shadow-sm border-neutral-800 focus:border-blue-500",
-                          errors.salary && "border-red-700"
-                        )}
-                      />
-                      {errors.salary && (
-                        <span className="text-red-800 text-xs px-3 mt-1 block">
-                          {errors.salary.message}
-                        </span>
-                      )}
-                      {field.value && !errors.salary && (
-                        <button
-                          type="button"
-                          className="absolute right-4 top-4.5 text-blue-500 cursor-pointer"
-                          onClick={() => field.onChange("")}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                      {errors.salary && (
-                        <CircleAlert className="absolute right-4 top-4.5 text-red-700 w-4 h-4" />
-                      )}
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </FormCard>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <FormCard
-              title="Ключевые слова"
-              icon={<Tags className="w-6 h-6" />}
-              description="Добавьте ключевые слова для лучшего поиска вакансии."
-            >
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Input
-                  value={currentTag}
-                  onChange={(e) => setCurrentTag(e.target.value)}
-                  placeholder="Например: React, JavaScript"
-                  className="py-6 text-white bg-neutral-900 border border-neutral-800 placeholder:text-zinc-400 rounded-xl shadow-sm focus:border-blue-500 flex-grow"
-                />
-              </div>
-              {errors.tags && (
-                <p className="text-red-800 text-sm mt-2 px-1">
-                  {errors.tags.message}
-                </p>
-              )}
-              <div
-                className={cn(
-                  "flex flex-wrap gap-2 my-4",
-                  tags.length === 0 && "my-2"
+                    />
+                    {errors.post && (
+                      <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
+                        {errors.post.message}
+                      </span>
+                    )}
+                    {field.value && !errors.post && (
+                      <button
+                        type="button"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+                        onClick={() => field.onChange("")}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                    {errors.post && (
+                      <CircleAlert className="absolute right-4 top-1/2 -translate-y-1/2 text-red-700 w-4 h-4" />
+                    )}
+                  </FormItem>
                 )}
-              >
-                <AnimatePresence>
-                  {tags.map((tag, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center"
+              />
+              <FormField
+                control={control}
+                name="salaryFrom"
+                render={({ field }) => (
+                  <FormItem className="relative">
+                    <FloatingLabelInput
+                      {...field}
+                      type="number"
+                      label="ЗП от:"
+                      className={cn(
+                        "py-1.5 text-black bg-[#f0f3f7] rounded-xl shadow-sm border-[#f0f3f7] focus:border-red-500",
+                        errors.salaryFrom && "border-red-700"
+                      )}
+                    />
+                    {errors.salaryFrom && (
+                      <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
+                        {errors.salaryFrom.message}
+                      </span>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="salaryTo"
+                render={({ field }) => (
+                  <FormItem className="relative">
+                    <FloatingLabelInput
+                      {...field}
+                      type="number"
+                      label="ЗП до:"
+                      className={cn(
+                        "py-1.5 text-black bg-[#f0f3f7] rounded-xl shadow-sm border-[#f0f3f7] focus:border-red-500",
+                        errors.salaryTo && "border-red-700"
+                      )}
+                    />
+                    {errors.salaryTo && (
+                      <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
+                        {errors.salaryTo.message}
+                      </span>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex items-end w-full">
+              <FormField
+                control={control}
+                name="workFormat"
+                render={({ field }) => (
+                  <FormItem className="relative w-full">
+                    <FormLabel className="text-gray-700 text-sm font-medium">
+                      Формат работы*
+                    </FormLabel>
+                    <ToggleButtonGroup
+                      options={workFormatOptions}
+                      value={field.value}
+                      onChange={field.onChange}
+                      name="workFormat"
+                      error={errors.workFormat?.message}
+                    />
+                    {errors.workFormat && (
+                      <FormMessage className="text-red-800 text-xs mt-1">
+                        {errors.workFormat.message}
+                      </FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="region"
+                render={({ field }) => (
+                  <FormItem className="relative w-full">
+                    <FloatingLabelInput
+                      {...field}
+                      label="Регион*"
+                      className={cn(
+                        "py-1.5  text-black bg-[#f0f3f7] rounded-xl shadow-sm border-[#f0f3f7] focus:border-red-500",
+                        errors.region && "border-red-700"
+                      )}
+                    />
+                    {errors.region && (
+                      <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
+                        {errors.region.message}
+                      </span>
+                    )}
+                    {field.value && !errors.region && (
+                      <button
+                        type="button"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+                        onClick={() => field.onChange("")}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                    {errors.region && (
+                      <CircleAlert className="absolute right-4 top-1/2 -translate-y-1/2 text-red-700 w-4 h-4" />
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={control}
+              name="experience"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FormLabel className="text-gray-700 text-sm font-medium">
+                    Опыт*
+                  </FormLabel>
+                  <ToggleButtonGroup
+                    options={experienceOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    name="experience"
+                    error={errors.experience?.message}
+                  />
+                  {errors.experience && (
+                    <FormMessage className="text-red-800 text-xs mt-1">
+                      {errors.experience.message}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="keywords"
+              render={({ field }) => (
+                <FormItem className="relative">
+                  <FloatingLabelInput
+                    {...field}
+                    label="Ключевые слова (через запятую)"
+                    className={cn(
+                      "py-1.5 text-black bg-[#f0f3f7] rounded-xl shadow-sm border-[#f0f3f7] focus:border-red-500",
+                      errors.keywords && "border-red-700"
+                    )}
+                  />
+                  {errors.keywords && (
+                    <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
+                      {errors.keywords.message}
+                    </span>
+                  )}
+                  {field.value && !errors.keywords && (
+                    <button
+                      type="button"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+                      onClick={() => field.onChange("")}
                     >
-                      {tag}
-                      <X
-                        className="w-4 h-4 ml-2 cursor-pointer"
-                        onClick={() => removeTag(index)}
-                      />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                  {errors.keywords && (
+                    <CircleAlert className="absolute right-4 top-1/2 -translate-y-1/2 text-red-700 w-4 h-4" />
+                  )}
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-gray-700 text-sm font-medium">Обязанности*</h3>
+            <section className="flex">
               <Button
                 type="button"
-                onClick={addTag}
-                className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
+                className="bg-gray-200 text-red-600 hover:bg-gray-300 rounded-full px-5 py-3 flex items-center justify-center font-medium"
+                onClick={() => addDescriptionField("responsibilities")}
               >
-                <Plus className="w-4 h-4" /> Добавить
+                <Plus className="w-5 h-5" />
               </Button>
-            </FormCard>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <FormCard
-              title="Обязанности"
-              icon={<CheckSquare className="w-6 h-6" />}
-              description="Что будет входить в круг обязанностей сотрудника."
-            >
-              <div className="space-y-3 mb-4">
-                {watch("responsibilities.description").map((_, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex gap-2 items-start"
-                  >
+              <div className="space-y-3  w-full">
+                {responsibilities.map((_, index) => (
+                  <div key={index} className="flex gap-2 items-start  w-full">
                     <FormField
                       control={control}
-                      name={`responsibilities.description.${index}`}
+                      name={`responsibilities.${index}`}
                       render={({ field }) => (
-                        <FormItem className="relative gap-1 flex-1">
+                        <FormItem className="relative flex-1">
                           <textarea
                             {...field}
                             placeholder="Введите обязанность"
                             className={cn(
-                              "p-3 text-white resize-none outline-none text-sm placeholder:text-zinc-500 bg-neutral-900 rounded-xl shadow-sm border border-neutral-800 focus:border-blue-500 w-full",
-                              errors.responsibilities?.description?.[index] &&
+                              "p-3 resize-none text-black bg-[#f0f3f7] text-sm placeholder:text-gray-500 outline-none rounded-xl shadow-sm border border-[#f0f3f7] focus:border-red-500 w-full",
+                              errors.responsibilities?.[index] &&
                                 "border-red-700"
                             )}
                             rows={2}
                           />
-                          {errors.responsibilities?.description?.[index] && (
+                          {errors.responsibilities?.[index] && (
                             <span className="text-red-800 text-xs px-3 mt-1 block">
-                              {
-                                errors.responsibilities.description[index]
-                                  ?.message
-                              }
+                              {errors.responsibilities[index]?.message}
                             </span>
                           )}
                         </FormItem>
@@ -328,66 +394,55 @@ export const VacancyCreateForm = () => {
                     <Button
                       type="button"
                       onClick={() =>
-                        removeDescription("responsibilities", index)
+                        removeDescriptionField("responsibilities", index)
                       }
                       variant="ghost"
-                      className="text-zinc-400 hover:text-red-500 p-2"
+                      className="text-gray-400 hover:text-red-500 p-2"
                     >
                       <X className="w-5 h-5" />
                     </Button>
-                  </motion.div>
+                  </div>
                 ))}
+                {errors.responsibilities &&
+                  typeof errors.responsibilities.message === "string" && (
+                    <p className="text-red-800 text-xs px-3 mt-1 block">
+                      {errors.responsibilities.message}
+                    </p>
+                  )}
               </div>
+            </section>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-gray-700 text-sm font-medium">Требования*</h3>
+            <section className="flex">
               <Button
                 type="button"
-                className="text-blue-500 w-full sm:w-auto"
-                value={"responsibilities"}
-                onClick={addDescription}
-                variant="outline"
+                className="bg-gray-200 text-red-600 hover:bg-gray-300 rounded-full px-5 py-3 flex items-center justify-center font-medium"
+                onClick={() => addDescriptionField("requirements")}
               >
-                <Plus className="w-4 h-4" /> Добавить обязанность
+                <Plus className="w-5 h-5" />
               </Button>
-            </FormCard>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <FormCard
-              title="Требования"
-              icon={<ClipboardList className="w-6 h-6" />}
-              description="Какими навыками и опытом должен обладать кандидат."
-            >
-              <div className="space-y-3 mb-4">
-                {watch("requirements.description").map((_, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex gap-2 items-start"
-                  >
+              <div className="space-y-3 w-full">
+                {requirements.map((_, index) => (
+                  <div key={index} className="flex gap-2 items-start">
                     <FormField
                       control={control}
-                      name={`requirements.description.${index}`}
+                      name={`requirements.${index}`}
                       render={({ field }) => (
-                        <FormItem className="relative gap-1 flex-1">
+                        <FormItem className="relative flex-1">
                           <textarea
                             {...field}
                             placeholder="Введите требование"
                             className={cn(
-                              "p-3 resize-none text-white bg-neutral-900 text-sm placeholder:text-zinc-500 outline-none rounded-xl shadow-sm border border-neutral-800 focus:border-blue-500 w-full",
-                              errors.requirements?.description?.[index] &&
-                                "border-red-700"
+                              "p-3 resize-none text-black bg-[#f0f3f7] text-sm placeholder:text-gray-500 outline-none rounded-xl shadow-sm border border-[#f0f3f7] focus:border-red-500 w-full",
+                              errors.requirements?.[index] && "border-red-700"
                             )}
                             rows={2}
                           />
-                          {errors.requirements?.description?.[index] && (
+                          {errors.requirements?.[index] && (
                             <span className="text-red-800 text-xs px-3 mt-1 block">
-                              {errors.requirements.description[index]?.message}
+                              {errors.requirements[index]?.message}
                             </span>
                           )}
                         </FormItem>
@@ -395,39 +450,43 @@ export const VacancyCreateForm = () => {
                     />
                     <Button
                       type="button"
-                      onClick={() => removeDescription("requirements", index)}
+                      onClick={() =>
+                        removeDescriptionField("requirements", index)
+                      }
                       variant="ghost"
-                      className="text-zinc-400 hover:text-red-500 p-2"
+                      className="text-gray-400 hover:text-red-500 p-2"
                     >
                       <X className="w-5 h-5" />
                     </Button>
-                  </motion.div>
+                  </div>
                 ))}
+                {errors.requirements &&
+                  typeof errors.requirements.message === "string" && (
+                    <p className="text-red-800 text-xs px-3 mt-1 block">
+                      {errors.requirements.message}
+                    </p>
+                  )}
               </div>
-              <Button
-                type="button"
-                className="text-blue-500 w-full sm:w-auto"
-                value={"requirements"}
-                onClick={addDescription}
-                variant="outline"
-              >
-                <Plus className="w-4 h-4" /> Добавить требование
-              </Button>
-            </FormCard>
-          </motion.div>
+            </section>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
+          {/* Кнопки Создать и Отменить */}
+          <div className="flex justify-end space-x-4 pt-4">
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="px-8 py-3 rounded-full bg-[#D00E46] text-white hover:bg-[#B00C3B] transition-colors font-semibold"
             >
-              Создать вакансию
+              Создать
             </Button>
-          </motion.div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => form.reset()} // Просто сбрасываем форму
+              className="px-8 py-3 rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition-colors font-semibold"
+            >
+              Отменить
+            </Button>
+          </div>
         </form>
       </FormProvider>
     </div>

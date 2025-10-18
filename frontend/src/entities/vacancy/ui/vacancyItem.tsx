@@ -9,19 +9,23 @@ import { TagChip } from "@/shared/ui/badge/ui/badgeChip";
 interface VacancyItemProps {
   vacancy: Vacancy;
   isFavoriteIcon?: boolean;
+  isTag?: boolean;
   action: ReactNode;
+  footerAction?: ReactNode;
   onClick?: (vacancyId: number) => void;
 }
 
 export const VacancyItem = ({
   vacancy,
+  isTag = true,
   isFavoriteIcon = true,
+  footerAction,
   action,
   onClick = () => {},
 }: VacancyItemProps) => {
   return (
     <div
-      className="bg-white text-black rounded-3xl p-4 flex flex-col gap-3 shadow-md"
+      className="bg-white text-black rounded-3xl justify-around p-4 flex flex-col gap-3 shadow-md min-h-[140px]"
       onClick={() => onClick(vacancy.id)}
     >
       <div className="flex items-start justify-between">
@@ -55,22 +59,24 @@ export const VacancyItem = ({
       </div>
 
       <section className="flex justify-between items-center">
-        <div className="flex">
-          <TagChip variant={"glassLight"} size={"md"} className="space-x-2">
-            <Image
-              src={vacancy.company.icon_url}
-              alt={vacancy.company.name}
-              width={20}
-              height={20}
-              className="rounded-md object-cover"
-            />
-            <p className="font-semibold text-sm text-zinc-500">
-              {vacancy.company.name}
-            </p>
-          </TagChip>
-          <TagGroup tags={vacancy.tags} variant="glassLight" size="md" />
-        </div>
-
+        {isTag && (
+          <div className="flex">
+            <TagChip variant={"glassLight"} size={"md"} className="space-x-2">
+              <Image
+                src={vacancy.company.icon_url}
+                alt={vacancy.company.name}
+                width={20}
+                height={20}
+                className="rounded-md object-cover"
+              />
+              <p className="font-semibold text-sm text-zinc-500">
+                {vacancy.company.name}
+              </p>
+            </TagChip>
+            <TagGroup tags={vacancy.tags} variant="glassLight" size="md" />
+          </div>
+        )}
+        {footerAction}
         <div className="flex">{action}</div>
       </section>
     </div>

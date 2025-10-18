@@ -16,7 +16,7 @@ export const TagChip: React.FC<TagChipProps> = ({
   const variantCls = {
     glassLight: "bg-[#F0F3F7] text-black",
     solidDark: "bg-neutral-800 text-gray-300",
-    outline: "border border-white/20 text-white",
+    outline: "border bg-white border-white/20 text-zinc-600",
   }[variant];
 
   return (

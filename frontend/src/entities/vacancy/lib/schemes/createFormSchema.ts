@@ -1,18 +1,51 @@
-import z from "zod";
+import * as z from "zod";
 
-export const VacancyFormSchema = z.object({
-  region: z.string().min(1, "Region is required"),
-  post: z.string().min(1, "Job title is required"),
-  salary: z.string().min(1, "Salary is required"),
-  tags: z.array(z.string()).min(1, "At least one tag is required"),
-  responsibilities: z.object({
-    title: z.string().min(1, "Responsibilities title is required").optional(),
-    description: z.array(z.string().min(1, "Description cannot be empty")),
-  }),
-  requirements: z.object({
-    title: z.string().min(1, "Requirements title is required").optional(),
-    description: z.array(z.string().min(1, "Description cannot be empty")),
-  }),
+export const WorkFormatEnum = z.enum(["office", "remote", "hybrid"], {
+  message: "Выберите формат работы",
 });
+export type WorkFormatType = z.infer<typeof WorkFormatEnum>;
+
+export const ExperienceLevelEnum = z.enum(
+  [
+    "no_experience",
+    "1_to_3_years",
+    "3_to_6_years",
+    "more_than_6_years",
+    "not_important",
+  ],
+  {
+    message: "Выберите уровень опыта",
+  }
+);
+export type ExperienceLevelType = z.infer<typeof ExperienceLevelEnum>;
+
+export const VacancyFormSchema = z
+  .object({
+    post: z.string().min(1, "Название должности обязательно"),
+    salaryFrom: z.number(),
+    salaryTo: z.number(),
+    workFormat: WorkFormatEnum,
+    region: z.string().min(1, "Регион обязателен"),
+    experience: ExperienceLevelEnum,
+    keywords: z.string().optional(),
+    responsibilities: z
+      .array(z.string().min(1, "Обязанность не может быть пустой"))
+      .min(1, "Необходимо указать хотя бы одну обязанность"),
+    requirements: z
+      .array(z.string().min(1, "Требование не может быть пустой"))
+      .min(1, "Необходимо указать хотя бы одно требование"),
+  })
+  .refine(
+    (data) => {
+      if (data.salaryFrom !== undefined && data.salaryTo !== undefined) {
+        return data.salaryFrom <= data.salaryTo;
+      }
+      return true;
+    },
+    {
+      message: "ЗП от не может быть больше ЗП до",
+      path: ["salaryTo"],
+    }
+  );
 
 export type VacancyFormData = z.infer<typeof VacancyFormSchema>;

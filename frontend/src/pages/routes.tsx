@@ -4,9 +4,9 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import { lazy } from "react";
 import AuthPage from "./(auth)/authPage";
 import { ERouteNames } from "@/shared";
-import { vacancyDetailAction } from "@/entities/vacancy/actions/vacancyDetailAction";
 import { routesWithHoc } from "@/shared/lib/utils/routesWithHoc";
 import { privatePage } from "@/entities/viewer/lib/hoc/privatePage";
+import { Header } from "@/widgets/header/ui/header";
 
 const ApplicantPage = lazy(() => import("@/pages/(dashboard)/dashboardPage"));
 
@@ -51,7 +51,12 @@ export const routes = createBrowserRouter([
     children: [
       {
         path: ERouteNames.EMPTY_ROUTE,
-        element: <Outlet />,
+        element: (
+          <div className="space-y-10">
+            <Header />
+            <Outlet />
+          </div>
+        ),
         children: [
           {
             path: ERouteNames.DASHBOARD_ROUTE,

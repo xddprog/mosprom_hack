@@ -1,38 +1,20 @@
-import { Pie, PieChart } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/ui/card/card";
-import { motion } from "framer-motion";
-
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/shared/ui/chart/chart";
-import {
-  Users,
-  Percent,
-  Settings,
-  GraduationCap,
-  BriefcaseBusiness,
-} from "lucide-react";
-import { InfoCard } from "@/widgets/infoCard";
-import { useNavigate } from "react-router-dom";
-import { ERouteNames } from "@/shared";
+import { ChartConfig } from "@/shared/ui/chart/chart";
 import { useAnalytics } from "@/entities/analytic/hooks/useAnalytics";
 import { useEffect, useState } from "react";
-import { Image } from "@/shared/ui";
+import { Button } from "@/shared/ui";
+import { Container } from "@/widgets/container/container";
+import { cn } from "@/shared/lib/utils/twMerge";
+import { CompanyVacancyContent } from "@/entities/vacancy/ui/companyVacancyContent";
+import { ProfileCompanyContent } from "@/features/profile/ui/profileCompanyContent";
+
+type TabsType = "vacancy" | "profile";
 
 const AnalyticsPage: React.FC = () => {
   const [chartConfig, setChartConfig] = useState<ChartConfig>({
     candidates: { label: "Кандидаты" },
   });
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabsType>("profile");
+
   const {
     data: analyticsData,
     isFetching,
@@ -40,16 +22,8 @@ const AnalyticsPage: React.FC = () => {
     isSuccess,
   } = useAnalytics();
 
-  const handleToManagement = () => {
-    navigate(ERouteNames.MANAGEMENT_ROUTE);
-  };
-
-  const handleToInternship = () => {
-    navigate(ERouteNames.COMPANY_INTERNSHIP_ROUTE);
-  };
-
-  const handleToProfile = () => {
-    navigate(ERouteNames.COMPANY_PROFILE_ROUTE);
+  const handleToggleTab = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setActiveTab(event.currentTarget.value as TabsType);
   };
 
   useEffect(() => {
@@ -78,182 +52,47 @@ const AnalyticsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 pb-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-          className="relative sm:col-span-2"
-        >
-          <Image
-            src="/images/vacancy_main.png"
-            alt="vacancy-banner"
-            className="rounded-3xl w-full max-h-[350px]"
-          />
-
-          <div className="absolute inset-0 flex flex-col justify-between p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-xl font-medium text-white">
-                  Удобно просматривайте аналитику ваших вакансий
-                </h1>
-              </div>
+    <Container className="text-black flex-col space-y-6 pb-4">
+      <div className="flex flex-col space-y-6">
+        <h1 className="text-3xl">Параметры профиля</h1>
+        <section className="flex space-x-4">
+          <div className="w-[288px]">
+            <div>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "p-6 rounded-3xl w-full bg-white hover:bg-white text-black",
+                  activeTab === "profile" &&
+                    "bg-[#D00E46] hover:bg-[#D00E46] text-white hover:text-white"
+                )}
+                value={"profile"}
+                onClick={handleToggleTab}
+              >
+                Параметры
+              </Button>
+            </div>
+            <div>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "p-6 rounded-3xl w-full bg-white text-black hover:bg-white",
+                  activeTab === "vacancy" &&
+                    "bg-[#D00E46] hover:bg-[#D00E46] text-white hover:text-white"
+                )}
+                value={"vacancy"}
+                onClick={handleToggleTab}
+              >
+                Вакансии
+              </Button>
             </div>
           </div>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-          className="col-span-1 sm:col-span-1"
-        >
-          <InfoCard
-            icon={<BriefcaseBusiness className="w-5 h-5 text-zinc-300" />}
-            title={
-              <>
-                Профиль <br /> компании
-              </>
-            }
-            onClick={handleToProfile}
-          />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="col-span-1 sm:col-span-1"
-        >
-          <InfoCard
-            icon={<Settings className="w-5 h-5 text-zinc-300" />}
-            title={
-              <>
-                Создание <br /> вакансий
-              </>
-            }
-            onClick={handleToManagement}
-          />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="col-span-1 sm:col-span-1"
-        >
-          <InfoCard
-            icon={<GraduationCap className="w-5 h-5 text-zinc-300" />}
-            title={
-              <>
-                Наборы
-                <br /> на стажировки
-              </>
-            }
-            onClick={handleToInternship}
-          />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
-          className="col-span-1 sm:col-span-2"
-        >
-          <Card className="bg-neutral-900 border-zinc-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-zinc-300">
-                Всего кандидатов
-              </CardTitle>
-              <Users className="h-4 w-4 text-zinc-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl text-zinc-300 font-bold">
-                {analyticsData?.totalCandidates}
-              </div>
-              <p className="text-xs text-zinc-500">
-                За период: {analyticsData?.candidatesThisMonth}
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
-          className="col-span-1 sm:col-span-2"
-        >
-          <Card className="bg-neutral-900 border-zinc-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-zinc-300">
-                Распределение по статусам
-              </CardTitle>
-              <CardDescription className="text-xs text-zinc-500">
-                Процент кандидатов по статусам
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig}>
-                <PieChart>
-                  <Pie
-                    data={analyticsData?.statusDistribution}
-                    dataKey="value"
-                    nameKey="name"
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.3 }}
-          className="col-span-1 sm:col-span-2"
-        >
-          <Card className="bg-neutral-900 border-zinc-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-zinc-300">
-                Средний % соответствия
-              </CardTitle>
-              <Percent className="h-4 w-4 text-zinc-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl text-zinc-300 font-bold">
-                {analyticsData?.averageMatch}%
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.3 }}
-          className="col-span-1 sm:col-span-2"
-        >
-          <Card className="bg-neutral-900 border-zinc-700">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-zinc-300">
-                Топ-вакансии
-              </CardTitle>
-              <CardDescription className="text-xs text-zinc-500">
-                Кандидаты по вакансиям
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig}>
-                <PieChart>
-                  <Pie
-                    data={analyticsData?.topVacancies}
-                    dataKey="value"
-                    nameKey="name"
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </motion.div>
+          <div className="w-full">
+            {activeTab === "profile" && <ProfileCompanyContent />}
+            {activeTab === "vacancy" && <CompanyVacancyContent />}
+          </div>
+        </section>
       </div>
-    </div>
+    </Container>
   );
 };
 
