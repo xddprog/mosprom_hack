@@ -26,7 +26,7 @@ class ApplicationService:
             content={"message": "Вы успешно подали заявку на вакансию."}
         )
         
-    async def get_kanban(self, company_id: int) -> dict:
+    async def get_kanban(self, company_id: int) -> list[KanbanColumnDTO]:
         db_applications = await self.repository.get_kanban(company_id)
         applications: defaultdict[str, Application] = defaultdict(list)
         for application in db_applications:

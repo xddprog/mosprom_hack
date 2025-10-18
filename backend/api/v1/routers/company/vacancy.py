@@ -20,7 +20,7 @@ async def create_vacancy(
     vacancy_service: FromDishka[VacancyService],
     tag_service: FromDishka[TagService],
     user = Depends(COMPANY_PROTECTED)
-):
+) -> VacancyFromCompanyDTO:
     if data.tags:
         data.tags = await tag_service.get_tags(data.tags)
     return await vacancy_service.create_vacancy(user.company_id, data)
@@ -40,7 +40,7 @@ async def get_vacancies(
     max_salary: int | None = None,
     tags: list[int] | None = Query(None),
     work_formats: list[WorkFormat] | None = Query(None),
-):
+) -> list[VacancyFromCompanyDTO]:
     return await service.get_vacancies_from_company(
         VacancyFilters(
             is_internship=is_internship,
@@ -63,7 +63,7 @@ async def delete_vacancy(
     service: FromDishka[VacancyService],
     user: Annotated[BaseUserModel, Depends(COMPANY_PROTECTED)],
     vacancy_id: int
-):
+) -> None:
     return await service.delete_vacancy(vacancy_id, user.company_id)
     
 
@@ -75,7 +75,7 @@ async def update_vacancy(
     service: FromDishka[VacancyService],
     tag_service: FromDishka[TagService],
     user = Depends(COMPANY_PROTECTED)
-):
+) -> VacancyFromCompanyDTO:
     if data.tags:
         data.tags = await tag_service.get_tags(data.tags)
     return await service.update_vacancy(vacancy_id, data, user.company_id)

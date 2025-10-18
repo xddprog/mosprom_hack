@@ -18,11 +18,8 @@ class VacancyService:
         vacancies = await self.vacancy_repository.get_all(limit=limit, offset=offset, **filters.model_dump())
         return [VacancyPublicDTO.model_validate(vacancy, from_attributes=True) for vacancy in vacancies]
 
-    async def get_vacancies_from_company(self, company_id: int, filters: VacancyFilters):
-        vacancies = await self.vacancy_repository.get_all(
-            **filters.model_dump(), 
-            company_id=company_id
-        )
+    async def get_vacancies_from_company(self, filters: VacancyFilters):
+        vacancies = await self.vacancy_repository.get_all(**filters.model_dump())
         return [VacancyFromCompanyDTO.model_validate(vacancy, from_attributes=True) for vacancy in vacancies]
     
     async def check_vacancy_exists(self, vacancy_id: int):

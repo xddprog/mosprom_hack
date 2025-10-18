@@ -4,10 +4,6 @@ from pydantic import BaseModel
 from backend.core.dto.application import CandidateCardDTO
 
 
-class CompanyKanban(BaseModel):
-    pass
-
-
 class CompanyDTO(BaseModel):
     id: int
     name: str
