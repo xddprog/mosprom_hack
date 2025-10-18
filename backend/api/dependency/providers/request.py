@@ -58,6 +58,19 @@ class RequestProvider(Provider):
             aws_client=aws_client
         )
 
+    @provide(scope=Scope.REQUEST)
+    async def get_student_service(self, session: AsyncSession, aws_client: AWSClient) -> services.StudentService:
+        return services.StudentService(
+            student_repository=repositories.StudentRepository(session),
+            aws_client=aws_client
+        )
+
+    @provide(scope=Scope.REQUEST)
+    async def get_university_service(self, session: AsyncSession) -> services.UniversityService:
+        return services.UniversityService(
+            university_repository=repositories.UniversityRepository(session)
+        )
+
 def require_role(allowed_roles: list[Role]):
     @inject
     async def dependency(

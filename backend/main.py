@@ -10,7 +10,8 @@ from backend.api.dependency.setup import setup_container
 from backend.api.v1.routers.admin import admin_v1_router 
 from backend.api.v1.routers.client import client_v1_router 
 from backend.api.v1.routers.company import company_v1_router
-from backend.api.v1.routers.auth import router as auth_router
+from backend.api.v1.routers.university import university_v1_router
+from backend.api.v1.routers.auth import auth_v1_router
 from backend.infrastructure.database.connection.postgres_connection import DatabaseConnection
 
 
@@ -44,7 +45,8 @@ setup_dishka(di_container, app)
 app.include_router(admin_v1_router)
 app.include_router(client_v1_router)
 app.include_router(company_v1_router)
-app.include_router(auth_router)
+app.include_router(university_v1_router)
+app.include_router(auth_v1_router)
 
 
 @app.exception_handler(RequestValidationError)
