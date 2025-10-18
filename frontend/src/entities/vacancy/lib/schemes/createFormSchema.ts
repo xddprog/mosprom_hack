@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const WorkFormatEnum = z.enum(["office", "remote", "hybrid"], {
+export const WorkFormatEnum = z.enum(["Office", "Remote", "Hybrid"], {
   message: "Выберите формат работы",
 });
 export type WorkFormatType = z.infer<typeof WorkFormatEnum>;
@@ -27,7 +27,7 @@ export const VacancyFormSchema = z
     workFormat: WorkFormatEnum,
     region: z.string().min(1, "Регион обязателен"),
     experience: ExperienceLevelEnum,
-    keywords: z.string().optional(),
+    keywords: z.array(z.string().min(1, "Ключевое слово не может быть пустым")),
     responsibilities: z
       .array(z.string().min(1, "Обязанность не может быть пустой"))
       .min(1, "Необходимо указать хотя бы одну обязанность"),

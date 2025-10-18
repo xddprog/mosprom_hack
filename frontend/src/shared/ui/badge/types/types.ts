@@ -3,4 +3,5 @@ export type TagChipProps = {
   variant?: "glassLight" | "solidDark" | "outline";
   size?: "sm" | "md";
   className?: string;
+  onClick?: () => void;
 };

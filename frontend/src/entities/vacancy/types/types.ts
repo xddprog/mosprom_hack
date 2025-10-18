@@ -12,14 +12,17 @@ export interface VacancySection {
 }
 
 export interface CreateVacancyDto {
-  company_id: string;
+  title: string;
+  min_salary: number;
+  max_salary: number;
+  experience: string;
   region: string;
-  post: string;
-  salary: string;
-  tags: string[];
-  is_favorite: boolean;
-  responsibilities: VacancySection;
-  requirements: VacancySection;
+  tags: Array<Tag>;
+  work_format: WorkFormat;
+  responsibilities: string[];
+  requirements: string[];
+  conditions: string[];
+  is_internship: boolean;
 }
 
 export type InternshipListing = {
@@ -33,21 +36,25 @@ export type InternshipListing = {
   deadline: string;
 };
 
+export type WorkFormat = "Office" | "Remote" | "Hybrid" | null;
+
 export interface Vacancy {
   id: number;
-  company: Company;
+  title: string;
+  min_salary: number;
+  max_salary: number;
+  experience: undefined;
   region: string;
-  post: string;
-  salary: string;
-  tags: Array<string>;
-  isFavorite: boolean;
-  responsibilities: VacancySection;
-  requirements: VacancySection;
+  tags: Tag[];
+  work_format: WorkFormat;
+  responsibilities: string[];
+  requirements: string[];
+  conditions: string[];
+  is_internship: boolean;
+  company: Company;
 }
 
 export type ExperienceType = "no-experience" | "1-3" | "3-6" | "more-6" | null;
-
-export type WorkFormat = "office" | "remote" | "hybrid" | null;
 
 export interface VacancyFilter {
   salaryMin: number | "";
@@ -55,4 +62,9 @@ export interface VacancyFilter {
   experience: ExperienceType;
   workFormat: WorkFormat;
   region: string;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
 }

@@ -9,9 +9,9 @@ import { motion } from "framer-motion";
 import { REGISTER_ROLE } from "../lib/constants";
 import { Button } from "@/shared/ui";
 import { useActions } from "@/shared/hooks/useActions";
-import { EAuthRoles } from "../types/types";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { selectAuthRole } from "../model/store/authSlice";
+import { EProfileRoles } from "@/entities/profile/types/types";
 
 interface RegisterRoleProps {
   onNextStep: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -21,7 +21,7 @@ export const RegisterRole = ({ onNextStep }: RegisterRoleProps) => {
   const selectRole = useAppSelector(selectAuthRole);
   const { setAuthRole } = useActions();
 
-  const handleRoleChange = (value: EAuthRoles) => {
+  const handleRoleChange = (value: EProfileRoles) => {
     setAuthRole(value);
   };
 

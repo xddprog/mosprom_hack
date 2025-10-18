@@ -14,19 +14,30 @@ import { ERouteNames } from "@/shared";
 import { useRegisterMutation } from "../hooks/useRegister";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { selectAuthRole } from "../model/store/authSlice";
-import { selectLabel } from "../lib/constants";
-import { EAuthRoles } from "../types/types";
 import { Combobox } from "@/shared/ui/combobox/combobox";
+import { EProfileRoles } from "@/entities/profile/types/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select/select";
+import { useGetCompanyList } from "@/entities/profile/hooks/useCurrentProfile";
 
 export const RegisterForm = () => {
   const selectRole = useAppSelector(selectAuthRole);
+
+  const { data: companyList } = useGetCompanyList();
 
   const form = useForm<TypeRegisterSchema>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       password: "",
-      username: "",
+      full_name: "",
+      company_id: undefined,
+      university_id: undefined,
     },
   });
 
@@ -37,7 +48,7 @@ export const RegisterForm = () => {
     reset,
     formState: { errors },
   } = form;
-
+  console.log(errors);
   const onSubmit = (authForm: TypeRegisterSchema) => {
     if (!selectRole) return;
     mutate({ ...authForm, role: selectRole });
@@ -89,10 +100,74 @@ export const RegisterForm = () => {
                 </FormItem>
               )}
             />
-            {selectRole === EAuthRoles.UNIVERSITY ? (
+            <FormField
+              control={form.control}
+              name="full_name"
+              render={({ field }) => (
+                <FormItem className="relative gap-1">
+                  <FloatingLabelInput
+                    {...field}
+                    label={"ФИО"}
+                    className={cn(
+                      "py-1.5 text-black bg-[#f0f3f7] rounded-3xl shadow-sm border-[#f0f3f7]",
+                      errors.full_name && "border-red-700"
+                    )}
+                  />
+                  {errors.full_name && (
+                    <span className="text-red-800 text-xs px-3">
+                      {errors.full_name.message}
+                    </span>
+                  )}
+                  {field.value && !errors.full_name && (
+                    <button
+                      className="absolute right-4 top-4.5 text-blue-800 cursor-pointer"
+                      onClick={() => field.onChange("")}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                  {errors.full_name && (
+                    <button className="absolute right-4 top-4.5 text-red-800 cursor-pointer">
+                      <CircleAlert className="w-4 h-4" />
+                    </button>
+                  )}
+                </FormItem>
+              )}
+            />
+            {selectRole === EProfileRoles.COMPANY && (
               <FormField
                 control={form.control}
-                name="username"
+                name="company_id"
+                render={({ field }) => (
+                  <FormItem className="relative gap-1">
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                    >
+                      <SelectTrigger className="w-full rounded-3xl bg-[#f0f3f7] border-zinc-200 text-black text-[13px] focus:ring-1 focus:ring-zinc-400 py-6 px-3">
+                        <SelectValue placeholder="Выбрать компанию" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#f0f3f7] border-zinc-200 text-black rounded-3xl">
+                        {companyList &&
+                          companyList.map((company) => (
+                            <SelectItem
+                              key={company.id}
+                              value={String(company.id)}
+                              className="p-3 rounded-3xl"
+                            >
+                              {company.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {selectRole === EProfileRoles.UNIVERSITY && (
+              <FormField
+                control={form.control}
+                name="university_id"
                 render={({ field }) => (
                   <FormItem className="relative gap-1">
                     <Combobox
@@ -101,41 +176,6 @@ export const RegisterForm = () => {
                       onChangeValue={field.onChange}
                       onChangeSearchValue={() => {}}
                     />
-                  </FormItem>
-                )}
-              />
-            ) : (
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem className="relative gap-1">
-                    <FloatingLabelInput
-                      {...field}
-                      label={selectLabel[selectRole ?? EAuthRoles.APPLICANT]}
-                      className={cn(
-                        "py-1.5 text-black bg-[#f0f3f7] rounded-3xl shadow-sm border-[#f0f3f7]",
-                        errors.username && "border-red-700"
-                      )}
-                    />
-                    {errors.username && (
-                      <span className="text-red-800 text-xs px-3">
-                        {errors.username.message}
-                      </span>
-                    )}
-                    {field.value && !errors.username && (
-                      <button
-                        className="absolute right-4 top-4.5 text-blue-800 cursor-pointer"
-                        onClick={() => field.onChange("")}
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                    {errors.username && (
-                      <button className="absolute right-4 top-4.5 text-red-800 cursor-pointer">
-                        <CircleAlert className="w-4 h-4" />
-                      </button>
-                    )}
                   </FormItem>
                 )}
               />
@@ -149,6 +189,7 @@ export const RegisterForm = () => {
                   <FloatingLabelInput
                     {...field}
                     label="Пароль"
+                    type="password"
                     className={cn(
                       "py-1.5 text-black bg-[#f0f3f7] rounded-3xl shadow-sm border-[#f0f3f7]",
                       errors.password && "border-red-700"

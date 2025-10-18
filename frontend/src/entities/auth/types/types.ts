@@ -1,9 +1,4 @@
-export const enum EAuthRoles {
-  UNIVERSITY = "UNIVERSITY",
-  COMPANY = "COMPANY",
-  APPLICANT = "APPLICANT",
-  ADMIN = "ADMIN",
-}
+import { EProfileRoles } from "@/entities/profile/types/types";
 
 export interface LoginDto {
   email: string;
@@ -11,17 +6,10 @@ export interface LoginDto {
 }
 
 export interface RegisterDto {
-  username: string;
+  full_name: string;
   email: string;
   password: string;
-  role: EAuthRoles;
-}
-
-export interface AuthResponse {
-  id: 0;
-  email: string;
-  username: string;
-  image_url: string;
-  cv_file: string;
-  is_admin: boolean;
+  role: EProfileRoles;
+  company_id?: number;
+  university_id?: number;
 }

@@ -1,5 +1,5 @@
-import { EAuthRoles } from "../../types/types";
+import { EProfileRoles } from "@/entities/profile/types/types";
 
 export interface AuthSlice {
-  selectRole: EAuthRoles | null;
+  selectRole: EProfileRoles | null;
 }

@@ -1,21 +1,20 @@
-import { EAuthRoles } from "../types/types";
+import { EProfileRoles } from "@/entities/profile/types/types";
 
 export const REGISTER_ROLE = [
   {
     id: 2,
     title: "Работодатель",
-    role: EAuthRoles.COMPANY,
+    role: EProfileRoles.COMPANY,
   },
   {
     id: 3,
     title: "Учебное заведение",
-    role: EAuthRoles.UNIVERSITY,
+    role: EProfileRoles.UNIVERSITY,
   },
 ];
 
-export const selectLabel: Record<EAuthRoles, string> = {
-  [EAuthRoles.APPLICANT]: "Фио",
-  [EAuthRoles.COMPANY]: "Название компании",
-  [EAuthRoles.UNIVERSITY]: "Название учебного заведения",
-  [EAuthRoles.ADMIN]: "Администратор",
+export const selectLabel: Record<EProfileRoles, string> = {
+  [EProfileRoles.COMPANY]: "Название компании",
+  [EProfileRoles.UNIVERSITY]: "Название учебного заведения",
+  [EProfileRoles.ADMIN]: "Администратор",
 };

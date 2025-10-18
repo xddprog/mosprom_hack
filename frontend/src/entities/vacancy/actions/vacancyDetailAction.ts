@@ -1,7 +1,7 @@
 import { queryClient } from "@/shared/api/queryClient";
 import { LoaderFunctionArgs, redirect } from "react-router-dom";
 import { Vacancy } from "../types/types";
-import { getVacancyById } from "../api/vacancyService";
+import { getAllVacancy } from "../api/vacancyService";
 import { ERouteNames } from "@/shared";
 import { VACANCY_ALL_QUERY, VACANCY_DETAIL_QUERY } from "../lib/queryKeys";
 
@@ -26,7 +26,9 @@ export const vacancyDetailAction = async ({
       return getVacancyCachedById({ vacancies: cached, vacancyId });
     }
 
-    return await getVacancyById({ vacancyId });
+    const vacancies = await getAllVacancy();
+
+    return getVacancyCachedById({ vacancies, vacancyId });
   };
 
   const selectVacancy = await loadVacancy();

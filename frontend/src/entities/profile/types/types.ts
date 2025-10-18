@@ -1,14 +1,18 @@
-import { UniversityData } from "@/entities/university/types/types";
+export const enum EProfileRoles {
+  UNIVERSITY = "University",
+  ADMIN = "Admin",
+  COMPANY = "Company",
+}
 
 export interface Profile {
-  id: number;
+  id: 0;
   email: string;
-  username: string;
+  full_name: string;
   image_url: string;
   cv_file: string;
-  is_admin: true;
-  activity_status_id: string;
-  university: UniversityData;
+  role: EProfileRoles;
+  company_id: number;
+  university_id: number;
 }
 
 export interface ApplicantActivityStatus {
@@ -18,4 +22,12 @@ export interface ApplicantActivityStatus {
   icon: React.ElementType;
   color: string;
   bgColor: string;
+}
+
+export interface Company {
+  id: number;
+  name: string;
+  icon_url: string;
+  site_url: string;
+  industry: string;
 }

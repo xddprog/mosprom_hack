@@ -23,11 +23,13 @@ export const RegisterSchema = z.object({
       message: "Пароль не должен превышать 128 символов",
     })
     .trim(),
-  username: z
+  full_name: z
     .string({
       message: "Юзернейм обязателен",
     })
     .trim(),
+  company_id: z.number().optional(),
+  university_id: z.number().optional(),
 });
 
 export type TypeRegisterSchema = z.infer<typeof RegisterSchema>;

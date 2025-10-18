@@ -6,7 +6,6 @@ import { useCallback } from "react";
 import { LoadingCard } from "@/widgets/loadingCard/ui/loadingCard";
 import { Image } from "@/shared/ui";
 import { IconButton } from "@/shared/ui/button/iconButton";
-import { mockVacanciesByCompany } from "../lib/constants";
 
 export const VacancyList = () => {
   const { data: vacancies, isLoading } = useGetVacancy();
@@ -26,8 +25,8 @@ export const VacancyList = () => {
     <div className="space-y-3 w-full">
       {isLoading ? (
         <LoadingCard className="h-[460px]" />
-      ) : mockVacanciesByCompany && mockVacanciesByCompany.length > 0 ? (
-        mockVacanciesByCompany.map((vacancy) => (
+      ) : vacancies && vacancies.length > 0 ? (
+        vacancies.map((vacancy) => (
           <VacancyItem
             key={vacancy.id}
             vacancy={vacancy}

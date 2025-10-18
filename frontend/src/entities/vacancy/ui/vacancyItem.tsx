@@ -31,7 +31,7 @@ export const VacancyItem = ({
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <div>
-            <h3 className="text-2xl font-medium">{vacancy.post}</h3>
+            <h3 className="text-2xl font-medium">{vacancy.title}</h3>
           </div>
         </div>
         <div className="flex items-center">
@@ -40,19 +40,12 @@ export const VacancyItem = ({
             size={"md"}
             className="space-x-2 text-sm"
           >
-            {vacancy.salary}
+            {vacancy.min_salary} - {vacancy.max_salary}
           </TagChip>
 
           {isFavoriteIcon && (
             <button>
-              <Heart
-                className={cn(
-                  "w-5 h-5",
-                  vacancy.isFavorite
-                    ? "fill-[#D00E46] text-[#D00E46]"
-                    : "text-gray-400"
-                )}
-              />
+              <Heart className={cn("w-5 h-5 fill-[#D00E46] text-[#D00E46]")} />
             </button>
           )}
         </div>

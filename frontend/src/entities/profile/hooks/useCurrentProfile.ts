@@ -1,8 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getCurrentProfile, updateCurrentProfile } from "../api/profileService";
+import {
+  getCompaniesList,
+  getCurrentProfile,
+  updateCurrentProfile,
+} from "../api/profileService";
 import { queryClient } from "@/shared/api/queryClient";
 
 export const CURRENT_PROFILE_QUERY = "current-profile";
+export const COMPANY_LIST_QUERY = "company-list";
 
 export const useCurrentProfile = () => {
   return useQuery({
@@ -17,5 +22,12 @@ export const useUpdateProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CURRENT_PROFILE_QUERY] });
     },
+  });
+};
+
+export const useGetCompanyList = () => {
+  return useQuery({
+    queryKey: [COMPANY_LIST_QUERY],
+    queryFn: getCompaniesList,
   });
 };

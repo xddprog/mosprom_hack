@@ -1,5 +1,5 @@
 import { axiosAuth } from "@/shared/api/baseQueryInstance";
-import { Profile } from "../types/types";
+import { Company, Profile } from "../types/types";
 
 class ProfileService {
   public async getCurrentProfile(): Promise<Profile> {
@@ -19,6 +19,13 @@ class ProfileService {
       }
     );
   }
+
+  public async getCompaniesList(): Promise<Array<Company>> {
+    const { data } = await axiosAuth.get<Array<Company>>("/client/company/");
+
+    return data;
+  }
 }
 
-export const { getCurrentProfile, updateCurrentProfile } = new ProfileService();
+export const { getCurrentProfile, updateCurrentProfile, getCompaniesList } =
+  new ProfileService();

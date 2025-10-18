@@ -18,6 +18,9 @@ import {
   ExperienceLevelEnum,
 } from "../lib/schemes/createFormSchema";
 import { useCreateVacancy } from "../hooks/useCreateVacancy";
+import { useGetTags } from "../hooks/useGetVacancy";
+import { TagGroup } from "@/shared/ui/badge/ui/badgeGroup";
+import { CreateVacancyDto } from "../types/types";
 
 const ToggleButtonGroup: React.FC<{
   options: { value: string; label: string }[];
@@ -47,7 +50,13 @@ const ToggleButtonGroup: React.FC<{
   </div>
 );
 
-export const VacancyCreateForm = () => {
+export const VacancyCreateForm = ({
+  vacancyType,
+}: {
+  vacancyType: "internship" | "vacancy";
+}) => {
+  const { data: vacancyTags } = useGetTags();
+
   const { mutate: createVacancy } = useCreateVacancy();
   const form = useForm<VacancyFormData>({
     resolver: zodResolver(VacancyFormSchema),
@@ -58,7 +67,7 @@ export const VacancyCreateForm = () => {
       salaryTo: undefined,
       workFormat: undefined,
       experience: undefined,
-      keywords: "",
+      keywords: undefined,
       responsibilities: [""],
       requirements: [""],
     },
@@ -75,11 +84,12 @@ export const VacancyCreateForm = () => {
 
   const responsibilities = watch("responsibilities");
   const requirements = watch("requirements");
+  const currentKeywords = watch("keywords");
 
   const workFormatOptions = [
-    { value: WorkFormatEnum.enum.office, label: "Офис" },
-    { value: WorkFormatEnum.enum.remote, label: "Удаленно" },
-    { value: WorkFormatEnum.enum.hybrid, label: "Гибрид" },
+    { value: WorkFormatEnum.enum.Office, label: "Офис" },
+    { value: WorkFormatEnum.enum.Remote, label: "Удаленно" },
+    { value: WorkFormatEnum.enum.Hybrid, label: "Гибрид" },
   ];
 
   const experienceOptions = [
@@ -111,40 +121,38 @@ export const VacancyCreateForm = () => {
     );
   };
 
-  const onSubmit = (data: VacancyFormData) => {
-    console.log("Отправка данных:", data);
+  const handleTagClick = (tagText: string) => {
+    if (!currentKeywords.includes(tagText)) {
+      setValue("keywords", [...currentKeywords, tagText], {
+        shouldValidate: true,
+      });
+    } else {
+      setValue(
+        "keywords",
+        currentKeywords.filter((k) => k !== tagText),
+        { shouldValidate: true }
+      );
+    }
+  };
 
-    const payload = {
-      company_id: "vtb-company",
-      is_favorite: false,
-      post: data.post,
-      salary:
-        data.salaryFrom && data.salaryTo
-          ? `${data.salaryFrom} - ${data.salaryTo} руб.`
-          : data.salaryFrom
-          ? `от ${data.salaryFrom} руб.`
-          : data.salaryTo
-          ? `до ${data.salaryTo} руб.`
-          : "",
+  const onSubmit = (data: VacancyFormData) => {
+    const selectTags =
+      vacancyTags?.filter((tag) => data.keywords.includes(tag.name)) ?? [];
+
+    const payload: CreateVacancyDto = {
+      title: data.post,
+      max_salary: data.salaryTo,
+      min_salary: data.salaryFrom,
       work_format: data.workFormat,
-      experience_level: data.experience,
       region: data.region,
-      keywords: data.keywords
-        ? data.keywords
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean)
-        : [],
-      responsibilities: {
-        title: "Обязанности",
-        description: data.responsibilities.filter(Boolean),
-      },
-      requirements: {
-        title: "Требования",
-        description: data.requirements.filter(Boolean),
-      },
+      experience: data.experience,
+      tags: selectTags,
+      responsibilities: data.responsibilities.filter(Boolean),
+      requirements: data.requirements.filter(Boolean),
+      is_internship: vacancyType === "internship",
+      conditions: [],
     };
-    console.log("Payload для бэкенда:", payload);
+    createVacancy(payload);
 
     form.reset();
   };
@@ -323,32 +331,18 @@ export const VacancyCreateForm = () => {
             <FormField
               control={control}
               name="keywords"
-              render={({ field }) => (
+              render={() => (
                 <FormItem className="relative">
-                  <FloatingLabelInput
-                    {...field}
-                    label="Ключевые слова (через запятую)"
-                    className={cn(
-                      "py-1.5 text-black bg-[#f0f3f7] rounded-xl shadow-sm border-[#f0f3f7] focus:border-red-500",
-                      errors.keywords && "border-red-700"
-                    )}
-                  />
-                  {errors.keywords && (
-                    <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
-                      {errors.keywords.message}
-                    </span>
-                  )}
-                  {field.value && !errors.keywords && (
-                    <button
-                      type="button"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
-                      onClick={() => field.onChange("")}
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                  {errors.keywords && (
-                    <CircleAlert className="absolute right-4 top-1/2 -translate-y-1/2 text-red-700 w-4 h-4" />
+                  <FormLabel className="text-gray-700 text-sm font-medium">
+                    Ключевые слова*
+                  </FormLabel>
+                  {vacancyTags && (
+                    <TagGroup
+                      tags={vacancyTags}
+                      variant="glassLight"
+                      size="md"
+                      onTagClick={handleTagClick}
+                    />
                   )}
                 </FormItem>
               )}
@@ -377,7 +371,7 @@ export const VacancyCreateForm = () => {
                             {...field}
                             placeholder="Введите обязанность"
                             className={cn(
-                              "p-3 resize-none text-black bg-[#f0f3f7] text-sm placeholder:text-gray-500 outline-none rounded-xl shadow-sm border border-[#f0f3f7] focus:border-red-500 w-full",
+                              "p-2 resize-none text-black bg-[#f0f3f7] text-sm placeholder:text-gray-500 outline-none rounded-xl shadow-sm border border-[#f0f3f7] focus:border-red-500 w-full",
                               errors.responsibilities?.[index] &&
                                 "border-red-700"
                             )}
@@ -435,7 +429,7 @@ export const VacancyCreateForm = () => {
                             {...field}
                             placeholder="Введите требование"
                             className={cn(
-                              "p-3 resize-none text-black bg-[#f0f3f7] text-sm placeholder:text-gray-500 outline-none rounded-xl shadow-sm border border-[#f0f3f7] focus:border-red-500 w-full",
+                              "p-2 resize-none text-black bg-[#f0f3f7] text-sm placeholder:text-gray-500 outline-none rounded-xl shadow-sm border border-[#f0f3f7] focus:border-red-500 w-full",
                               errors.requirements?.[index] && "border-red-700"
                             )}
                             rows={2}

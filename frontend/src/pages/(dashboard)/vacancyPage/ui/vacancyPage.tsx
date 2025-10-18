@@ -1,4 +1,4 @@
-import { mockVacanciesByCompany } from "@/entities/vacancy/lib/constants";
+import { Vacancy } from "@/entities/vacancy/types/types";
 import { VacancyResponseForm } from "@/entities/vacancy/ui/vacancyResponseForm";
 import { cn } from "@/shared/lib/utils/twMerge";
 import { Button, Image } from "@/shared/ui";
@@ -7,11 +7,10 @@ import { TagGroup } from "@/shared/ui/badge/ui/badgeGroup";
 import { IconButton } from "@/shared/ui/button/iconButton";
 import { Container } from "@/widgets/container/container";
 import { ChevronLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 const VacancyPage = () => {
-  // const vacancy = useLoaderData<Vacancy>();
-  const vacancy = mockVacanciesByCompany[0];
+  const vacancy = useLoaderData<Vacancy>();
   const navigate = useNavigate();
 
   const handleBack = () => navigate(-1);
@@ -27,7 +26,7 @@ const VacancyPage = () => {
           <ChevronLeft className="w-5 h-5 text-zinc-600" />
         </IconButton>
 
-        <h1 className="text-3xl">{vacancy.post}</h1>
+        <h1 className="text-3xl">{vacancy.title}</h1>
       </section>
       <section className="flex space-x-4">
         <div className="w-[288px] space-y-2">
@@ -47,28 +46,49 @@ const VacancyPage = () => {
         </div>
         <section className="flex flex-col space-y-6">
           <div className="space-y-6 w-full">
-            {[vacancy.responsibilities, vacancy.requirements].map(
-              (section, idx) => (
-                <div key={idx} className="space-y-2">
+            {vacancy.responsibilities &&
+              vacancy.responsibilities.length > 0 && (
+                <div className="space-y-2">
                   <div>
                     <Button
                       variant={"outline"}
                       className={cn(
                         "p-6 rounded-3xl bg-[#D00E46] hover:bg-[#D00E46] text-white hover:text-white"
                       )}
-                      value={"vacancy"}
+                      value={"responsibilities"}
                     >
-                      {section.title}
+                      Обязанности
                     </Button>
                   </div>
 
                   <ul className="list-disc px-2 list-inside space-y-2 text-black">
-                    {section.description.map((item, i) => (
+                    {vacancy.responsibilities.map((item, i) => (
                       <li key={i}>{item}</li>
                     ))}
                   </ul>
                 </div>
-              )
+              )}
+
+            {vacancy.requirements && vacancy.requirements.length > 0 && (
+              <div className="space-y-2">
+                <div>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "p-6 rounded-3xl bg-[#D00E46] hover:bg-[#D00E46] text-white hover:text-white"
+                    )}
+                    value={"requirements"}
+                  >
+                    Требования
+                  </Button>
+                </div>
+
+                <ul className="list-disc px-2 list-inside space-y-2 text-black">
+                  {vacancy.requirements.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
           <div className="p-5 rounded-3xl bg-white space-y-3">

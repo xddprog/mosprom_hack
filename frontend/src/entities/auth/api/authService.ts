@@ -1,35 +1,34 @@
 import { axiosNoAuth } from "@/shared/api/baseQueryInstance";
-import { AuthResponse, LoginDto, RegisterDto } from "../types/types";
+import { LoginDto, RegisterDto } from "../types/types";
+import { Profile } from "@/entities/profile/types/types";
 
 class AuthService {
-  public async adminLogin(loginDto: LoginDto): Promise<AuthResponse> {
-    const { data } = await axiosNoAuth.post<AuthResponse>("/admin/auth/login", {
+  public async adminLogin(loginDto: LoginDto): Promise<Profile> {
+    const { data } = await axiosNoAuth.post<Profile>("/admin/auth/login", {
       ...loginDto,
     });
 
     return data;
   }
 
-  public async userLogin(loginDto: LoginDto): Promise<AuthResponse> {
-    const { data } = await axiosNoAuth.post<AuthResponse>(
-      "/client/auth/login",
-      { ...loginDto }
-    );
+  public async userLogin(loginDto: LoginDto): Promise<Profile> {
+    const { data } = await axiosNoAuth.post<Profile>("/auth/login", {
+      ...loginDto,
+    });
 
     return data;
   }
 
-  public async userRegister(registerDto: RegisterDto): Promise<AuthResponse> {
-    const { data } = await axiosNoAuth.post<AuthResponse>(
-      "/client/auth/register",
-      { ...registerDto }
-    );
+  public async userRegister(registerDto: RegisterDto): Promise<Profile> {
+    const { data } = await axiosNoAuth.post<Profile>("/auth/register", {
+      ...registerDto,
+    });
 
     return data;
   }
 
   public async refresh(): Promise<string> {
-    const { data } = await axiosNoAuth.post<string>("/client/auth/refresh");
+    const { data } = await axiosNoAuth.post<string>("/auth/refresh");
 
     return data;
   }

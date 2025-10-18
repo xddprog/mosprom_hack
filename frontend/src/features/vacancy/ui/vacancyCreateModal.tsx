@@ -44,7 +44,7 @@ export const VacancyCreateModal = () => {
         </DialogHeader>
 
         <div className="flex flex-col gap-4 py-2 pr-2">
-          <VacancyCreateForm />
+          <VacancyCreateForm vacancyType={vacancyType} />
         </div>
       </DialogContent>
     </Dialog>

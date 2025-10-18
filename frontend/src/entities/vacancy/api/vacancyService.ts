@@ -1,4 +1,4 @@
-import { CreateVacancyDto, Vacancy } from "../types/types";
+import { CreateVacancyDto, Tag, Vacancy } from "../types/types";
 import { axiosAuth } from "@/shared/api/baseQueryInstance";
 
 class VacancyService {
@@ -21,6 +21,12 @@ class VacancyService {
     return data;
   }
 
+  public async getVacancyTags(): Promise<Array<Tag> | null> {
+    const { data } = await axiosAuth.get<Array<Tag>>(`/client/tags`);
+
+    return data;
+  }
+
   public async createVacancy(vacancyData: CreateVacancyDto): Promise<Vacancy> {
     const { data } = await axiosAuth.post<Vacancy>("/client/vacancy", {
       ...vacancyData,
@@ -28,7 +34,34 @@ class VacancyService {
 
     return data;
   }
+
+  public async responseByVacancy({
+    resume,
+    email,
+    full_name,
+    vacancy_id,
+  }: {
+    resume: FormData;
+    email: string;
+    full_name: string;
+    vacancy_id: string;
+  }) {
+    return await axiosAuth.post(
+      `/client/vacancy/${vacancy_id}/apply?email=${email}&full_name=${full_name}`,
+      resume as unknown as Record<string, unknown>,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  }
 }
 
-export const { getAllVacancy, getVacancyById, createVacancy } =
-  new VacancyService();
+export const {
+  getAllVacancy,
+  getVacancyById,
+  createVacancy,
+  getVacancyTags,
+  responseByVacancy,
+} = new VacancyService();

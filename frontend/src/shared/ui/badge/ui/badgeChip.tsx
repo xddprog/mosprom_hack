@@ -5,6 +5,7 @@ export const TagChip: React.FC<TagChipProps> = ({
   children,
   variant = "glassLight",
   size = "sm",
+  onClick,
   className,
 }) => {
   const base = "rounded-full inline-flex items-center whitespace-nowrap";
@@ -20,6 +21,11 @@ export const TagChip: React.FC<TagChipProps> = ({
   }[variant];
 
   return (
-    <span className={cn(base, sizeCls, variantCls, className)}>{children}</span>
+    <span
+      onClick={onClick}
+      className={cn(base, sizeCls, variantCls, className)}
+    >
+      {children}
+    </span>
   );
 };
