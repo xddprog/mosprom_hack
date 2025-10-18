@@ -26,5 +26,5 @@ class Student(Base):
 
     university: Mapped["University"] = relationship(back_populates="students")
     applications: Mapped[list["Application"]] = relationship(back_populates="student")
-    tags: Mapped[list["Tag"]] = relationship(secondary="student_tags", back_populates="students")
+    tags: Mapped[list["Tag"]] = relationship(secondary="student_tags", back_populates="students", lazy="selectin")
     

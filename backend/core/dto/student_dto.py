@@ -3,6 +3,11 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 
 
+class TagDTO(BaseModel):
+    id: int
+    name: str
+
+
 class StudentDTO(BaseModel):
     id: int
     full_name: str
@@ -13,6 +18,7 @@ class StudentDTO(BaseModel):
     course_number: int
     faculty: str
     university_id: int
+    tags: list[TagDTO]
 
 
 class StudentCreateDTO(BaseModel):
