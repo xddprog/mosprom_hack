@@ -25,7 +25,8 @@ class CompanyService:
     
     async def get_company(self, company_id: int) -> CompanyDTO:
         company = await self.company_repository.get_item(company_id)
-        if company:
+        
+        if not company:
             raise CompanyNotFoundError()
         return CompanyDTO.model_validate(company, from_attributes=True)
 
