@@ -14,5 +14,7 @@ router = APIRouter()
 async def get_universities(
     service: FromDishka[UniversityService],
     name: str | None = None,
+    limit: int = 20,
+    offset: int = 0,
 ) -> list[UniversityDTO]:
-    return await service.get_universities(name)
+    return await service.get_universities(name, limit, offset)

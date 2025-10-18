@@ -9,8 +9,6 @@ class BaseUserModel(BaseModel):
     id: int
     email: str
     full_name: str
-    image_url: str | None = None
-    cv_file: str | None = None
     role: Role
     company_id: int | None = None
     university_id: int | None = None
@@ -18,6 +16,4 @@ class BaseUserModel(BaseModel):
 
 class UserUpdateForm(BaseModel):
     email: EmailStr | None = Form(None)
-    username: str | None = Form(None)
-    image_url: UploadFile | None = Form(None)
-    cv_file: UploadFile | None = Form(None)
+    full_name: str | None = Form(None)

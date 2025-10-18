@@ -3,3 +3,5 @@ from backend.core.repositories.vacancy_repository import VacancyRepository
 from backend.core.repositories.tag_repository import TagRepository
 from backend.core.repositories.company_repository import CompanyRepository
 from backend.core.repositories.application_repository import ApplicationRepository
+from backend.core.repositories.student_repository import StudentRepository
+from backend.core.repositories.university_repository import UniversityRepository
