@@ -5,6 +5,7 @@ import {
 } from "../lib/schemes/registerSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem } from "@/shared/ui/form/form";
+import debounce from "lodash/debounce";
 import { FloatingLabelInput } from "@/shared/ui/input/floatingInputLabel";
 import { cn } from "@/shared/lib/utils/twMerge";
 import { CircleAlert, X } from "lucide-react";
@@ -24,11 +25,22 @@ import {
   SelectValue,
 } from "@/shared/ui/select/select";
 import { useGetCompanyList } from "@/entities/profile/hooks/useCurrentProfile";
+import { useUniversitySuggestions } from "@/entities/university/hooks/useUniversitySuggestions";
+import { useState } from "react";
 
 export const RegisterForm = () => {
+  const [universityName, setUniversityName] = useState("");
   const selectRole = useAppSelector(selectAuthRole);
 
   const { data: companyList } = useGetCompanyList();
+
+  const { data } = useUniversitySuggestions(universityName);
+
+  const fetchSuggestions = debounce((value: string) => {
+    if (!value) return;
+
+    setUniversityName(value);
+  }, 300);
 
   const form = useForm<TypeRegisterSchema>({
     resolver: zodResolver(RegisterSchema),
@@ -48,7 +60,7 @@ export const RegisterForm = () => {
     reset,
     formState: { errors },
   } = form;
-  console.log(errors);
+
   const onSubmit = (authForm: TypeRegisterSchema) => {
     if (!selectRole) return;
     mutate({ ...authForm, role: selectRole });
@@ -171,10 +183,12 @@ export const RegisterForm = () => {
                 render={({ field }) => (
                   <FormItem className="relative gap-1">
                     <Combobox
-                      {...field}
-                      options={[]}
-                      onChangeValue={field.onChange}
-                      onChangeSearchValue={() => {}}
+                      onChangeValue={(uniId) => {
+                        console.log(Number(uniId));
+                        field.onChange(Number(uniId));
+                      }}
+                      options={data ?? []}
+                      onChangeSearchValue={fetchSuggestions}
                     />
                   </FormItem>
                 )}

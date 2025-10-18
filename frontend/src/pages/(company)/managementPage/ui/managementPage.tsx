@@ -1,5 +1,4 @@
 import { mockVacanciesByCompany } from "@/entities/vacancy/lib/constants";
-import { VacancyCreateForm } from "@/entities/vacancy/ui/vacancyCreateForm";
 import { VacancyItem } from "@/entities/vacancy/ui/vacancyItem";
 import { ERouteNames } from "@/shared";
 import { Image } from "@/shared/ui";
@@ -72,7 +71,6 @@ const ManagementPage = () => {
                   </div>
                 </div>
               </motion.div>
-              <VacancyCreateForm />
             </div>
           </motion.div>
         </TabsContent>

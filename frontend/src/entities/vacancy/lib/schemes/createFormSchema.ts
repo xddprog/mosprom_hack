@@ -7,11 +7,11 @@ export type WorkFormatType = z.infer<typeof WorkFormatEnum>;
 
 export const ExperienceLevelEnum = z.enum(
   [
-    "no_experience",
-    "1_to_3_years",
-    "3_to_6_years",
-    "more_than_6_years",
-    "not_important",
+    "Not matter",
+    "None",
+    "From 1 to 3 years",
+    "From 3 to 6 years",
+    "More than 6 years",
   ],
   {
     message: "Выберите уровень опыта",
@@ -22,8 +22,8 @@ export type ExperienceLevelType = z.infer<typeof ExperienceLevelEnum>;
 export const VacancyFormSchema = z
   .object({
     post: z.string().min(1, "Название должности обязательно"),
-    salaryFrom: z.number(),
-    salaryTo: z.number(),
+    salaryFrom: z.string(),
+    salaryTo: z.string(),
     workFormat: WorkFormatEnum,
     region: z.string().min(1, "Регион обязателен"),
     experience: ExperienceLevelEnum,

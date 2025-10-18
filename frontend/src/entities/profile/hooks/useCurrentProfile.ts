@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   getCompaniesList,
+  getCompanyProfile,
   getCurrentProfile,
   updateCurrentProfile,
 } from "../api/profileService";
@@ -29,5 +30,12 @@ export const useGetCompanyList = () => {
   return useQuery({
     queryKey: [COMPANY_LIST_QUERY],
     queryFn: getCompaniesList,
+  });
+};
+
+export const useGetCompanyProfile = () => {
+  return useQuery({
+    queryKey: ["company-profile"],
+    queryFn: getCompanyProfile,
   });
 };

@@ -118,7 +118,7 @@ export const VacancyFilterContent = () => {
 
   return (
     <div
-      className="w-full max-w-[318px] max-h-[543px] mx-auto p-6 space-y-6 rounded-3xl shadow-xl bg-white"
+      className="w-full max-w-[320px] max-h-[543px] mx-auto p-6 space-y-6 rounded-3xl shadow-xl bg-white"
       style={{
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
         borderRadius: "20px",
@@ -133,7 +133,7 @@ export const VacancyFilterContent = () => {
         >
           Зарплата
         </label>
-        <div className="flex">
+        <div className="flex gap-2">
           <Input
             id="salaryMin"
             name="salaryMin"
@@ -157,11 +157,12 @@ export const VacancyFilterContent = () => {
 
       <div>
         <span className="block text-zinc-500 text-[15px] mb-2">Опыт</span>
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap gap-2">
           {EXPERIENCE_OPTIONS.map((option) => (
             <FilterOptionButton
               key={option.value === null ? "null-experience" : option.value}
               label={option.label}
+              className="text-xs"
               isSelected={vacancyLocalFilters.experience === option.value}
               onClick={() =>
                 handleExperienceChange(option.value as ExperienceType)
@@ -175,11 +176,12 @@ export const VacancyFilterContent = () => {
         <span className="block text-zinc-500 text-[15px] mb-2">
           Формат работы
         </span>
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap gap-2">
           {WORK_FORMAT_OPTIONS.map((option) => (
             <FilterOptionButton
               key={option.value}
               label={option.label}
+              className="text-xs"
               isSelected={vacancyLocalFilters.workFormat === option.value}
               onClick={() => handleWorkFormatChange(option.value as WorkFormat)}
             />

@@ -1,65 +1,54 @@
-import { cn } from "@/shared/lib/utils/twMerge";
-import { Label } from "@/shared/ui/label/label";
+import { Trash2 } from "lucide-react";
 import { Student } from "../types/types";
-import { Image } from "@/shared/ui";
-import { Badge } from "@/shared/ui/badge/ui/badge";
-import { ReactNode } from "react";
+import { TagGroup } from "@/shared/ui/badge/ui/badgeGroup";
+import { cn } from "@/shared/lib/utils/twMerge";
 
-interface UniversityStudentCardProps {
+interface StudentCardProps {
   student: Student;
-  requiredSkills: string[];
-  deleteAction?: ReactNode;
-  sendAction?: ReactNode;
+  className?: string;
+  onDelete?: (studetnId: number) => void;
 }
 
-export const UniversityStudentCard = ({
+export function StudentCard({
   student,
-  requiredSkills,
-  deleteAction,
-  sendAction,
-}: UniversityStudentCardProps) => {
+  className,
+  onDelete,
+}: StudentCardProps) {
   return (
     <div
       className={cn(
-        "flex flex-col relative items-start gap-3 p-3 rounded-xl border w-full bg-neutral-800 border-neutral-700"
+        "bg-white relative text-black rounded-3xl justify-around p-4 flex flex-col gap-3 shadow-md min-h-[140px]",
+        className
       )}
     >
-      {deleteAction}
-      <Label
-        htmlFor={`student-${student.id}`}
-        className="flex-1 cursor-pointer flex items-center gap-3"
-      >
-        <Image
-          src={student.imageUrl}
-          alt={student.name}
-          width={40}
-          height={40}
-          className="rounded-full object-cover"
+      {onDelete && (
+        <button
+          onClick={() => onDelete(student.id)}
+          className="absolute top-3 right-3 p-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+          aria-label="Удалить студента"
+        >
+          <Trash2 className="h-5 w-5" />
+        </button>
+      )}
+
+      <h2 className="text-xl mb-4 pr-12">{student.full_name}</h2>
+
+      <div className="flex flex-wrap gap-2">
+        <span className="inline-flex items-center rounded-full bg-white px-3 py-1 text-sm text-gray-700">
+          {student.course_number} курс
+        </span>
+
+        <span className="inline-flex items-center rounded-full bg-white px-3 py-1 text-sm text-gray-700">
+          {student.faculty}
+        </span>
+
+        <TagGroup
+          className="text-xs"
+          tags={student.tags}
+          variant="outline"
+          size="md"
         />
-        <div>
-          <p className="font-semibold text-white">{student.name}</p>
-          <p className="text-zinc-400 text-xs">
-            {student.groupName} - {student.course} курс
-          </p>
-          <div className="flex flex-wrap gap-1 mt-1">
-            {student.skills.map((skill) => (
-              <Badge
-                key={skill}
-                variant="secondary"
-                className={cn(
-                  "text-xs px-2 py-0.5",
-                  requiredSkills.includes(skill)
-                    ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/50"
-                    : "bg-neutral-700 text-zinc-400"
-                )}
-              >
-                {skill}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      </Label>
-      {sendAction}
+      </div>
     </div>
   );
-};
+}

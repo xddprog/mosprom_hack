@@ -3,11 +3,10 @@ import { Button } from "@/shared/ui";
 import { FloatingLabelInput } from "@/shared/ui/input/floatingInputLabel";
 import { ProfileLogoUploader } from "./profileLogoUploader";
 import { useState } from "react";
-import { Company } from "@/entities/profile/types/types";
 
-export const ProfileCompanyContent = ({ company }: { company: Company }) => {
+export const ProfileUniversityContent = () => {
   const [currentLogoUrl, setCurrentLogoUrl] = useState<string | null>(
-    company.icon_url
+    "/images/company/vtb.png"
   );
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -18,13 +17,10 @@ export const ProfileCompanyContent = ({ company }: { company: Company }) => {
     setUploadError(undefined);
     try {
       if (file) {
-        // Имитация загрузки файла на сервер
-        console.log("Сохранение файла:", file.name);
-        const newLogoUrl = URL.createObjectURL(file); // В реальном приложении это будет URL с сервера
+        const newLogoUrl = URL.createObjectURL(file);
         setCurrentLogoUrl(newLogoUrl);
         alert("Логотип успешно сохранен!");
       } else {
-        // Если вызвали save без файла, но с существующим лого (что не должно произойти с current logic)
         console.log("Нет нового файла для сохранения.");
       }
     } catch (err) {
@@ -39,7 +35,6 @@ export const ProfileCompanyContent = ({ company }: { company: Company }) => {
     setIsRemoving(true);
     setUploadError(undefined);
     try {
-      // Имитация удаления логотипа с сервера
       console.log("Удаление логотипа");
       setCurrentLogoUrl(null);
       alert("Логотип успешно удален!");
@@ -52,10 +47,9 @@ export const ProfileCompanyContent = ({ company }: { company: Company }) => {
   };
   return (
     <section className="flex flex-col w-full space-y-4">
-      <div className="flex w-full space-x-2">
+      <div className="flex w-full">
         <FloatingLabelInput
-          label="Название компании*"
-          value={company.name}
+          label="Название университета*"
           className={cn(
             "py-1.5 text-black w-full bg-white rounded-3xl shadow-sm border-[#f0f3f7]"
           )}
@@ -72,7 +66,6 @@ export const ProfileCompanyContent = ({ company }: { company: Company }) => {
         </div>
       </div>
       <ProfileLogoUploader
-        title="Логотип компании"
         initialLogoUrl={currentLogoUrl}
         onSave={handleSaveLogo}
         onDelete={handleDeleteLogo}

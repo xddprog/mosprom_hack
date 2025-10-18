@@ -17,7 +17,7 @@ export interface CreateVacancyDto {
   max_salary: number;
   experience: string;
   region: string;
-  tags: Array<Tag>;
+  tags: Array<number>;
   work_format: WorkFormat;
   responsibilities: string[];
   requirements: string[];

@@ -5,6 +5,7 @@ import { cn } from "@/shared/lib/utils/twMerge";
 
 interface ProfileLogoUploaderProps {
   initialLogoUrl?: string | null;
+  title?: string;
   onSave: (file: File | null) => void;
   onDelete: () => void;
   isSaving?: boolean;
@@ -14,6 +15,7 @@ interface ProfileLogoUploaderProps {
 
 export const ProfileLogoUploader: React.FC<ProfileLogoUploaderProps> = ({
   initialLogoUrl,
+  title = "Логотип университета",
   onSave,
   onDelete,
   isSaving = false,
@@ -27,7 +29,6 @@ export const ProfileLogoUploader: React.FC<ProfileLogoUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    // Обновляем previewUrl, если initialLogoUrl изменился извне
     if (initialLogoUrl !== previewUrl && !selectedFile) {
       setPreviewUrl(initialLogoUrl || null);
     }
@@ -38,11 +39,8 @@ export const ProfileLogoUploader: React.FC<ProfileLogoUploaderProps> = ({
       const file = event.target.files[0];
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
-      // Очищаем ошибку при выборе нового файла
-      // if (error) setError(null); // Если error управляется внутренним стейтом
     } else {
       setSelectedFile(null);
-      // Если файл был, но его отменили, возвращаемся к initialLogoUrl, если он был
       if (initialLogoUrl && !selectedFile) {
         setPreviewUrl(initialLogoUrl);
       } else if (!initialLogoUrl) {
@@ -61,10 +59,10 @@ export const ProfileLogoUploader: React.FC<ProfileLogoUploaderProps> = ({
 
   const handleDelete = () => {
     onDelete();
-    setSelectedFile(null); // Сбрасываем выбранный файл после удаления
-    setPreviewUrl(null); // Очищаем превью
+    setSelectedFile(null);
+    setPreviewUrl(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Очищаем input type="file"
+      fileInputRef.current.value = "";
     }
   };
 
@@ -73,7 +71,7 @@ export const ProfileLogoUploader: React.FC<ProfileLogoUploaderProps> = ({
 
   return (
     <div className="flex items-start flex-col space-y-4 p-4 rounded-3xl bg-white">
-      <h3 className="text-sm  flex-shrink-0 w-48">Логотип компании</h3>
+      <h3 className="text-sm  flex-shrink-0 w-48">{title}</h3>
 
       <div className="flex items-center space-x-4">
         <div
@@ -102,7 +100,7 @@ export const ProfileLogoUploader: React.FC<ProfileLogoUploaderProps> = ({
           />
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col space-y-2">
           <Button
             variant={"outline"}
             className={cn(

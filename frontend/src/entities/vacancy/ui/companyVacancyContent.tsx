@@ -3,14 +3,16 @@ import { Button } from "@/shared/ui";
 import { Input } from "@/shared/ui/input";
 import { useState } from "react";
 import { CompanyVacanciesList } from "./vacancyCompanyList";
-import { mockVacanciesByCompany } from "../lib/constants";
 import { useActions } from "@/shared/hooks/useActions";
 import { EModalVariables } from "@/shared/lib/utils/modalVariables";
+import { useGetCompanyVacancy } from "../hooks/useGetVacancy";
 
 type TabsType = "vacancy" | "internship";
 
-export const CompanyVacancyContent = () => {
+export const CompanyVacancyContent = ({ companyId }: { companyId: number }) => {
   const { setOpenModal } = useActions();
+  const { data: vacanciesByCompany = [] } = useGetCompanyVacancy({ companyId });
+
   const [activeTab, setActiveTab] = useState<TabsType>("vacancy");
 
   const handleToggleTab = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,13 +78,13 @@ export const CompanyVacancyContent = () => {
       <div>
         {activeTab === "vacancy" && (
           <CompanyVacanciesList
-            vacancies={mockVacanciesByCompany}
+            vacancies={vacanciesByCompany}
             onCreateVacancy={handleVacancyCreateModal}
           />
         )}
         {activeTab === "internship" && (
           <CompanyVacanciesList
-            vacancies={mockVacanciesByCompany}
+            vacancies={vacanciesByCompany}
             onCreateVacancy={handleVacancyCreateModal}
           />
         )}

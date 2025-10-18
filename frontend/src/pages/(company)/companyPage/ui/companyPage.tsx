@@ -6,6 +6,7 @@ import { Container } from "@/widgets/container/container";
 import { cn } from "@/shared/lib/utils/twMerge";
 import { CompanyVacancyContent } from "@/entities/vacancy/ui/companyVacancyContent";
 import { ProfileCompanyContent } from "@/features/profile/ui/profileCompanyContent";
+import { useGetCompanyProfile } from "@/entities/profile/hooks/useCurrentProfile";
 
 type TabsType = "vacancy" | "profile";
 
@@ -14,6 +15,8 @@ const AnalyticsPage: React.FC = () => {
     candidates: { label: "Кандидаты" },
   });
   const [activeTab, setActiveTab] = useState<TabsType>("profile");
+
+  const { data: company } = useGetCompanyProfile();
 
   const {
     data: analyticsData,
@@ -56,7 +59,7 @@ const AnalyticsPage: React.FC = () => {
       <div className="flex flex-col space-y-6">
         <h1 className="text-3xl">Параметры профиля</h1>
         <section className="flex space-x-4">
-          <div className="w-[288px]">
+          <div className="w-[288px] space-y-2">
             <div>
               <Button
                 variant={"outline"}
@@ -87,8 +90,12 @@ const AnalyticsPage: React.FC = () => {
             </div>
           </div>
           <div className="w-full">
-            {activeTab === "profile" && <ProfileCompanyContent />}
-            {activeTab === "vacancy" && <CompanyVacancyContent />}
+            {activeTab === "profile" && company && (
+              <ProfileCompanyContent company={company} />
+            )}
+            {activeTab === "vacancy" && company && (
+              <CompanyVacancyContent companyId={company?.id} />
+            )}
           </div>
         </section>
       </div>

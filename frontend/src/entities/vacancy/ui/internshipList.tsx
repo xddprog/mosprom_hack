@@ -6,10 +6,8 @@ import { LoadingCard } from "@/widgets/loadingCard/ui/loadingCard";
 import { VacancyItem } from "./vacancyItem";
 import { Image } from "@/shared/ui";
 import { IconButton } from "@/shared/ui/button/iconButton";
-import { ChevronRight } from "lucide-react";
 
 export const InternshipList = () => {
-  // TODO: Получаем стажировки по тому же эндпоинту, что и вакансии. Прокидываем query vacancy_type=internship
   const { data: vacancies, isLoading } = useGetVacancy();
   const navigate = useNavigate();
 
@@ -36,10 +34,10 @@ export const InternshipList = () => {
               <IconButton
                 value={vacancy.id}
                 ariaLabel="Перейти к вакансии"
-                className="bg-zinc-800 hover:bg-neutral-700"
+                className="bg-[#D00E46] text-white text-sm hover:bg-[#D00E46] px-4"
                 onClick={handleNavigateToDetail}
               >
-                <ChevronRight className="w-5 h-5 text-zinc-500" />
+                Откликнуться
               </IconButton>
             }
           />

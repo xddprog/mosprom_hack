@@ -31,10 +31,10 @@ export const VacancyItem = ({
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <div>
-            <h3 className="text-2xl font-medium">{vacancy.title}</h3>
+            <h3 className="text-xl">{vacancy.title}</h3>
           </div>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
           <TagChip
             variant={"glassLight"}
             size={"md"}
@@ -53,7 +53,7 @@ export const VacancyItem = ({
 
       <section className="flex justify-between items-center">
         {isTag && (
-          <div className="flex">
+          <div className="flex gap-2">
             <TagChip variant={"glassLight"} size={"md"} className="space-x-2">
               <Image
                 src={vacancy.company.icon_url}

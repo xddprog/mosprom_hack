@@ -7,6 +7,8 @@ export class CandidateService {
       resolve(mockCandidatesKanban);
     });
   }
+
+  public async getKanbanCnadidates() {}
 }
 
 export const { getCandidates } = new CandidateService();

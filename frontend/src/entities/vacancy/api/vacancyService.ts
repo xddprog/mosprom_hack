@@ -2,8 +2,7 @@ import { CreateVacancyDto, Tag, Vacancy } from "../types/types";
 import { axiosAuth } from "@/shared/api/baseQueryInstance";
 
 class VacancyService {
-  public async getAllVacancy(): // filters: Partial<VacancyFilter> | null
-  Promise<Array<Vacancy>> {
+  public async getAllVacancy(): Promise<Array<Vacancy>> {
     const { data } = await axiosAuth.get<Array<Vacancy>>("/client/vacancy", {});
 
     return data;
@@ -27,8 +26,20 @@ class VacancyService {
     return data;
   }
 
+  public async getVacancyByCompany({
+    companyId,
+  }: {
+    companyId: number;
+  }): Promise<Array<Vacancy>> {
+    const { data } = await axiosAuth.get<Array<Vacancy>>(
+      `/company/${companyId}/vacancy`
+    );
+
+    return data;
+  }
+
   public async createVacancy(vacancyData: CreateVacancyDto): Promise<Vacancy> {
-    const { data } = await axiosAuth.post<Vacancy>("/client/vacancy", {
+    const { data } = await axiosAuth.post<Vacancy>("/company/vacancy", {
       ...vacancyData,
     });
 
@@ -44,7 +55,7 @@ class VacancyService {
     resume: FormData;
     email: string;
     full_name: string;
-    vacancy_id: string;
+    vacancy_id: number;
   }) {
     return await axiosAuth.post(
       `/client/vacancy/${vacancy_id}/apply?email=${email}&full_name=${full_name}`,
@@ -56,6 +67,10 @@ class VacancyService {
       }
     );
   }
+
+  public async deleteVacancy({ vacancyId }: { vacancyId: string }) {
+    return await axiosAuth.delete(`/company/vacancy/${vacancyId}`);
+  }
 }
 
 export const {
@@ -64,4 +79,6 @@ export const {
   createVacancy,
   getVacancyTags,
   responseByVacancy,
+  getVacancyByCompany,
+  deleteVacancy,
 } = new VacancyService();

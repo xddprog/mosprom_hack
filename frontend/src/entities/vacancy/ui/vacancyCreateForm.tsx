@@ -67,7 +67,7 @@ export const VacancyCreateForm = ({
       salaryTo: undefined,
       workFormat: undefined,
       experience: undefined,
-      keywords: undefined,
+      keywords: [],
       responsibilities: [""],
       requirements: [""],
     },
@@ -94,13 +94,19 @@ export const VacancyCreateForm = ({
 
   const experienceOptions = [
     {
-      value: ExperienceLevelEnum.enum.not_important,
+      value: ExperienceLevelEnum.enum["Not matter"],
       label: "Не имеет значения",
     },
-    { value: ExperienceLevelEnum.enum.no_experience, label: "Без опыта" },
-    { value: ExperienceLevelEnum.enum["1_to_3_years"], label: "От 1 до 3" },
-    { value: ExperienceLevelEnum.enum["3_to_6_years"], label: "От 3 до 6" },
-    { value: ExperienceLevelEnum.enum.more_than_6_years, label: "Более 6" },
+    { value: ExperienceLevelEnum.enum.None, label: "Без опыта" },
+    {
+      value: ExperienceLevelEnum.enum["From 1 to 3 years"],
+      label: "От 1 до 3",
+    },
+    {
+      value: ExperienceLevelEnum.enum["From 3 to 6 years"],
+      label: "От 3 до 6",
+    },
+    { value: ExperienceLevelEnum.enum["More than 6 years"], label: "Более 6" },
   ];
 
   const addDescriptionField = (
@@ -122,14 +128,14 @@ export const VacancyCreateForm = ({
   };
 
   const handleTagClick = (tagText: string) => {
-    if (!currentKeywords.includes(tagText)) {
+    if (!currentKeywords?.includes(tagText)) {
       setValue("keywords", [...currentKeywords, tagText], {
         shouldValidate: true,
       });
     } else {
       setValue(
         "keywords",
-        currentKeywords.filter((k) => k !== tagText),
+        currentKeywords?.filter((k) => k !== tagText),
         { shouldValidate: true }
       );
     }
@@ -141,12 +147,12 @@ export const VacancyCreateForm = ({
 
     const payload: CreateVacancyDto = {
       title: data.post,
-      max_salary: data.salaryTo,
-      min_salary: data.salaryFrom,
+      max_salary: Number(data.salaryTo),
+      min_salary: Number(data.salaryFrom),
       work_format: data.workFormat,
       region: data.region,
       experience: data.experience,
-      tags: selectTags,
+      tags: selectTags.map((tag) => tag.id),
       responsibilities: data.responsibilities.filter(Boolean),
       requirements: data.requirements.filter(Boolean),
       is_internship: vacancyType === "internship",
@@ -155,6 +161,8 @@ export const VacancyCreateForm = ({
     createVacancy(payload);
 
     form.reset();
+    form.resetField("salaryFrom");
+    form.resetField("salaryTo");
   };
 
   return (
@@ -342,6 +350,12 @@ export const VacancyCreateForm = ({
                       variant="glassLight"
                       size="md"
                       onTagClick={handleTagClick}
+                      getClassName={(tagName) =>
+                        cn(
+                          currentKeywords.includes(tagName) &&
+                            "bg-red-600 text-white"
+                        )
+                      }
                     />
                   )}
                 </FormItem>
@@ -464,7 +478,6 @@ export const VacancyCreateForm = ({
             </section>
           </div>
 
-          {/* Кнопки Создать и Отменить */}
           <div className="flex justify-end space-x-4 pt-4">
             <Button
               type="submit"
@@ -475,7 +488,7 @@ export const VacancyCreateForm = ({
             <Button
               type="button"
               variant="outline"
-              onClick={() => form.reset()} // Просто сбрасываем форму
+              onClick={() => form.reset()}
               className="px-8 py-3 rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition-colors font-semibold"
             >
               Отменить

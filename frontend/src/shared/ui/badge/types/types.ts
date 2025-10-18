@@ -4,4 +4,5 @@ export type TagChipProps = {
   size?: "sm" | "md";
   className?: string;
   onClick?: () => void;
+  getClassName?: () => string;
 };

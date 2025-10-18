@@ -7,6 +7,7 @@ import { ERouteNames } from "@/shared";
 import { routesWithHoc } from "@/shared/lib/utils/routesWithHoc";
 import { privatePage } from "@/entities/viewer/lib/hoc/privatePage";
 import { Header } from "@/widgets/header/ui/header";
+import { vacancyDetailAction } from "@/entities/vacancy/actions/vacancyDetailAction";
 
 const ApplicantPage = lazy(() => import("@/pages/(dashboard)/dashboardPage"));
 
@@ -72,7 +73,7 @@ export const routes = createBrowserRouter([
               },
               {
                 path: ERouteNames.VACANCY_ROUTE,
-                // loader: vacancyDetailAction,
+                loader: vacancyDetailAction,
                 element: <VacancyPage />,
               },
             ],

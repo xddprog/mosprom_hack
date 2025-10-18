@@ -1,9 +1,8 @@
-// components/vacancy-response-form.tsx
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { CircleAlert, X, Link as LinkIcon, Upload } from "lucide-react"; // иконки
-import React, { useState, useRef } from "react"; // Импортируем useState и useRef
+import { CircleAlert, X } from "lucide-react";
+import React, { useRef } from "react";
 import {
   TypeVacancyResponseSchema,
   VacancyResponseSchema,
@@ -21,22 +20,18 @@ import { cn } from "@/shared/lib/utils/twMerge";
 import { Button } from "@/shared/ui";
 import { Input } from "@/shared/ui/input";
 import { Checkbox } from "@/shared/ui/checkbox/checkbox";
+import { useResponseByVacancy } from "../hooks/useCreateVacancy";
 
-type ResumeMode = "link" | "file" | null;
-
-export const VacancyResponseForm = () => {
-  const [resumeMode, setResumeMode] = useState<ResumeMode>(null);
+export const VacancyResponseForm = ({ vacancyId }: { vacancyId: number }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutate: responseVacancy } = useResponseByVacancy();
 
   const form = useForm<TypeVacancyResponseSchema>({
     resolver: zodResolver(VacancyResponseSchema),
     defaultValues: {
-      lastName: "",
-      firstName: "",
-      middleName: "",
+      fullName: "",
       phone: "",
       email: "",
-      resumeLink: "",
       resumeFile: undefined,
       agreeToDataProcessing: false,
       agreeToNewsletter: false,
@@ -56,30 +51,24 @@ export const VacancyResponseForm = () => {
   const watchedResumeFile = watch("resumeFile");
 
   const onSubmit = (data: TypeVacancyResponseSchema) => {
-    console.log("Форма отправлена:", data);
-    // Здесь отправка данных на бэкенд
-    // Если resumeFile - это File объект, его нужно будет отправить через FormData
-    // Пример:
-    // const formData = new FormData();
-    // Object.entries(data).forEach(([key, value]) => {
-    //   if (key === "resumeFile" && value instanceof File) {
-    //     formData.append(key, value, value.name);
-    //   } else if (value !== undefined && value !== null) {
-    //     formData.append(key, String(value));
-    //   }
-    // });
-    // axios.post('/api/apply', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    const payload = {
+      email: data.email,
+      full_name: data.fullName,
+      vacancy_id: vacancyId,
+    };
+
+    const formData = new FormData();
+    formData.append("resume", data.resumeFile);
+
+    responseVacancy({ ...payload, resume: formData });
 
     reset();
-    setResumeMode(null);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       setValue("resumeFile", file);
-      setValue("resumeLink", "");
-      setResumeMode("file");
     } else {
       setValue("resumeFile", undefined);
     }
@@ -91,40 +80,30 @@ export const VacancyResponseForm = () => {
     }
   };
 
-  const handleLinkModeClick = () => {
-    setResumeMode("link");
-    setValue("resumeFile", undefined);
-  };
-
-  const handleFileModeClick = () => {
-    setResumeMode("file");
-    setValue("resumeLink", "");
-  };
-
   return (
     <div className="flex flex-col w-full justify-center">
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3">
+          <div className="w-full">
             <FormField
               control={form.control}
-              name="lastName"
+              name="fullName"
               render={({ field }) => (
                 <FormItem className="relative">
                   <FloatingLabelInput
                     {...field}
-                    label="Фамилия*"
+                    label="ФИО*"
                     className={cn(
                       "py-1 text-black bg-[#f0f3f7] rounded-3xl shadow-sm border-[#f0f3f7]",
-                      errors.lastName && "border-red-700"
+                      errors.fullName && "border-red-700"
                     )}
                   />
-                  {errors.lastName && (
+                  {errors.fullName && (
                     <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
-                      {errors.lastName.message}
+                      {errors.fullName.message}
                     </span>
                   )}
-                  {field.value && !errors.lastName && (
+                  {field.value && !errors.fullName && (
                     <button
                       type="button"
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-800 cursor-pointer"
@@ -133,82 +112,17 @@ export const VacancyResponseForm = () => {
                       <X className="w-4 h-4" />
                     </button>
                   )}
-                  {errors.lastName && (
+                  {errors.fullName && (
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-red-800">
                       <CircleAlert className="w-4 h-4" />
                     </div>
-                  )}
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem className="relative">
-                  <FloatingLabelInput
-                    {...field}
-                    label="Имя*"
-                    className={cn(
-                      "py-1 text-black bg-[#f0f3f7] rounded-3xl shadow-sm border-[#f0f3f7]",
-                      errors.firstName && "border-red-700"
-                    )}
-                  />
-                  {errors.firstName && (
-                    <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
-                      {errors.firstName.message}
-                    </span>
-                  )}
-                  {field.value && !errors.firstName && (
-                    <button
-                      type="button"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-800 cursor-pointer"
-                      onClick={() => field.onChange("")}
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                  {errors.firstName && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-red-800">
-                      <CircleAlert className="w-4 h-4" />
-                    </div>
-                  )}
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="middleName"
-              render={({ field }) => (
-                <FormItem className="relative">
-                  <FloatingLabelInput
-                    {...field}
-                    label="Отчество"
-                    className={cn(
-                      "py-1 text-black bg-[#f0f3f7] rounded-3xl shadow-sm border-[#f0f3f7]",
-                      errors.middleName && "border-red-700"
-                    )}
-                  />
-                  {errors.middleName && (
-                    <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
-                      {errors.middleName.message}
-                    </span>
-                  )}
-                  {field.value && !errors.middleName && (
-                    <button
-                      type="button"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-800 cursor-pointer"
-                      onClick={() => field.onChange("")}
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
                   )}
                 </FormItem>
               )}
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <FormField
               control={form.control}
               name="phone"
@@ -285,131 +199,61 @@ export const VacancyResponseForm = () => {
 
           <FormItem className="relative">
             <FormLabel className="sr-only">Резюме*</FormLabel>
-            <div className="flex items-center">
-              <Button
-                type="button"
-                variant="outline"
-                className={cn(
-                  "flex-1 py-3 px-4 rounded-3xl text-sm font-medium",
-                  resumeMode === "link"
-                    ? "bg-[#D00E46]/60 hover:bg-[#D00E46]/60 text-white hover:text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                )}
-                onClick={handleLinkModeClick}
-              >
-                <LinkIcon className="mr-2 h-4 w-4" /> Ссылка
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className={cn(
-                  "flex-1 py-3 px-4 rounded-3xl text-sm font-medium",
-                  resumeMode === "file"
-                    ? "bg-[#D00E46]/60 hover:bg-[#D00E46]/60 text-white hover:text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                )}
-                onClick={handleFileModeClick}
-              >
-                <Upload className="mr-2 h-4 w-4" /> Файл
-              </Button>
-            </div>
 
-            {resumeMode === "link" && (
-              <FormField
-                control={form.control}
-                name="resumeLink"
-                render={({ field }) => (
-                  <FormItem className="relative mt-2">
-                    <FloatingLabelInput
-                      {...field}
-                      label="Ссылка на резюме*"
-                      className={cn(
-                        "py-1 text-black bg-[#f0f3f7] rounded-3xl shadow-sm border-[#f0f3f7]",
-                        errors.resumeLink && "border-red-700"
-                      )}
-                    />
-                    {errors.resumeLink && (
-                      <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
-                        {errors.resumeLink.message}
-                      </span>
+            <FormField
+              control={form.control}
+              name="resumeFile"
+              render={({ field }) => (
+                <FormItem className="relative mt-2">
+                  <Input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    name={field.name}
+                  />
+                  <div
+                    className={cn(
+                      "relative w-full px-3 py-2 bg-[#f0f3f7] rounded-3xl shadow-sm border border-[#f0f3f7] text-black cursor-pointer flex items-center justify-between",
+                      errors.resumeFile && "border-red-700",
+                      !watchedResumeFile && "text-gray-500"
                     )}
-                    {field.value && !errors.resumeLink && (
+                    onClick={handleFileUploadClick}
+                  >
+                    <span>
+                      {watchedResumeFile instanceof File
+                        ? watchedResumeFile.name
+                        : "Выберите файл резюме*"}
+                    </span>
+                    {watchedResumeFile instanceof File && (
                       <button
                         type="button"
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-800 cursor-pointer"
-                        onClick={() => field.onChange("")}
+                        className="text-blue-800"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setValue("resumeFile", undefined);
+                          if (fileInputRef.current)
+                            fileInputRef.current.value = "";
+                        }}
                       >
                         <X className="w-4 h-4" />
                       </button>
                     )}
-                    {errors.resumeLink && (
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-red-800">
-                        <CircleAlert className="w-4 h-4" />
-                      </div>
-                    )}
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {resumeMode === "file" && (
-              <FormField
-                control={form.control}
-                name="resumeFile"
-                render={({ field }) => (
-                  <FormItem className="relative mt-2">
-                    <Input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      className="hidden"
-                      name={field.name}
-                    />
-                    <div
-                      className={cn(
-                        "relative w-full px-3 py-2 bg-[#f0f3f7] rounded-3xl shadow-sm border border-[#f0f3f7] text-black cursor-pointer flex items-center justify-between",
-                        errors.resumeFile && "border-red-700",
-                        !watchedResumeFile && "text-gray-500"
-                      )}
-                      onClick={handleFileUploadClick}
-                    >
-                      <span>
-                        {watchedResumeFile instanceof File
-                          ? watchedResumeFile.name
-                          : "Выберите файл резюме*"}
-                      </span>
-                      {watchedResumeFile instanceof File && (
-                        <button
-                          type="button"
-                          className="text-blue-800"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setValue("resumeFile", undefined);
-                            if (fileInputRef.current)
-                              fileInputRef.current.value = "";
-                          }}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                    {errors.resumeFile && (
-                      <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
-                        Резюме обязательно
-                      </span>
-                    )}
-                    {errors.root?.message &&
-                      !errors.resumeFile &&
-                      !errors.resumeLink && (
-                        <span className="text-red-800 text-xs px-3 mt-1 block">
-                          {errors.root.message}
-                        </span>
-                      )}
-                  </FormItem>
-                )}
-              />
-            )}
-            {errors.root?.message && !resumeMode && (
+                  </div>
+                  {errors.resumeFile && (
+                    <span className="text-red-800 text-xs px-3 absolute -bottom-5 left-0">
+                      Резюме обязательно
+                    </span>
+                  )}
+                  {errors.root?.message && !errors.resumeFile && (
+                    <span className="text-red-800 text-xs px-3 mt-1 block">
+                      {errors.root.message}
+                    </span>
+                  )}
+                </FormItem>
+              )}
+            />
+            {errors.root?.message && (
               <span className="text-red-800 text-xs px-3 mt-1 block">
                 {errors.root.message}
               </span>

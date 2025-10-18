@@ -1,3 +1,5 @@
+import { Tag } from "@/entities/vacancy/types/types";
+
 export interface UniversityData {
   universityName: string;
   groupName: string;
@@ -5,26 +7,30 @@ export interface UniversityData {
 }
 
 export interface UniversitySuggest {
-  value: string;
-  unrestricted_value: string;
-  data: {
-    address: string;
-    inn: string;
-    orgn: string;
-    okpo: string;
-  };
+  id: number;
+  name: string;
 }
 
 export interface Student {
   id: number;
-  name: string;
-  imageUrl: string;
-  course: number;
-  skills: string[];
-  groupName: string;
-  githubUrl: string;
-  cv_file?: string;
-  initialRating: number;
-  recommended?: boolean;
-  recommendedComment?: string;
+  full_name: string;
+  email: string;
+  age: number;
+  phone_number: string;
+  tags: Array<Tag>;
+  resume_link: string;
+  course_number: number;
+  faculty: string;
+  university_id: number;
+}
+
+export interface CreateStudentDto {
+  full_name: string;
+  email: string;
+  age: number;
+  phone_number?: string;
+  course_number: number;
+  faculty: string;
+  tags?: number[];
+  resume: File;
 }

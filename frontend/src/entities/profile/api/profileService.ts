@@ -3,7 +3,7 @@ import { Company, Profile } from "../types/types";
 
 class ProfileService {
   public async getCurrentProfile(): Promise<Profile> {
-    const { data } = await axiosAuth.get<Profile>("/client/auth/current_user");
+    const { data } = await axiosAuth.get<Profile>("/auth/current_user");
 
     return data;
   }
@@ -25,7 +25,17 @@ class ProfileService {
 
     return data;
   }
+
+  public async getCompanyProfile(): Promise<Company> {
+    const { data } = await axiosAuth.get<Company>("/company/");
+
+    return data;
+  }
 }
 
-export const { getCurrentProfile, updateCurrentProfile, getCompaniesList } =
-  new ProfileService();
+export const {
+  getCurrentProfile,
+  updateCurrentProfile,
+  getCompanyProfile,
+  getCompaniesList,
+} = new ProfileService();

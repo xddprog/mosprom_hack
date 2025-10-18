@@ -22,7 +22,7 @@ const DashboardPage = () => {
       <div className="flex gap-4">
         <VacancyFilterContent />
         <div className="flex w-full flex-col space-y-4">
-          <div className="flex w-full">
+          <div className="flex w-full space-x-2">
             <div>
               <Button
                 variant={"outline"}

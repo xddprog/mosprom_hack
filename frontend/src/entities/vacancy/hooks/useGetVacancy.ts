@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllVacancy, getVacancyTags } from "../api/vacancyService";
+import {
+  getAllVacancy,
+  getVacancyByCompany,
+  getVacancyTags,
+} from "../api/vacancyService";
 import { useAppSelector } from "@/shared/hooks/useAppSelector";
 import { vacancySelectors } from "../model/store/vacancySlice";
 import { VACANCY_ALL_QUERY } from "../lib/queryKeys";
@@ -20,5 +24,14 @@ export const useGetTags = () => {
   return useQuery({
     queryKey: [VACANCY_TAGS_QUERY],
     queryFn: () => getVacancyTags(),
+  });
+};
+
+export const VACANCY_COMPANY_QUERY = "vacancy-company";
+
+export const useGetCompanyVacancy = ({ companyId }: { companyId: number }) => {
+  return useQuery({
+    queryKey: [VACANCY_COMPANY_QUERY],
+    queryFn: () => getVacancyByCompany({ companyId }),
   });
 };
