@@ -1,0 +1,112 @@
+
+services:
+  db:
+    image: postgres:15
+    container_name: db-store
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U postgres -h 127.0.0.1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app-network
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   container_name: frontend-store
+  #   ports:
+  #     - "5173:80"
+  #   depends_on:
+  #     - app 
+  #   restart: always
+  #   networks:
+  #     - app-network
+
+  # redis:
+  #   image: redis:7
+  #   container_name: redis-store
+  #   networks:
+  #     - app-network
+
+  # rabbitmq:
+  #   image: rabbitmq:3.10.7-management
+  #   container_name: rabbitmq-store
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   networks:
+  #     - app-network
+  #   healthcheck:
+  #     test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+  #     interval: 10s
+  #     timeout: 5s
+      # retries: 5
+
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx-proxy
+  #   command: /bin/sh -c "rm -f /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+  #   volumes:
+  #     - /etc/nginx/sites-available/poseshaemosti.net:/etc/nginx/conf.d/poseshaemosti.conf
+  #     - /etc/letsencrypt:/etc/letsencrypt:ro
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - app-network
+
+  app:
+    build:
+      context: ./backend
+    container_name: app-store
+    environment:
+      - DB_NAME=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=postgres
+
+      - JWT_SECRET=812659050808fd763749156b9b403c46a2338f082b4cc1316d3b0ac8794937aa
+      - JWT_ACCESS_TOKEN_TIME=15
+      - JWT_ALGORITHM=HS256
+      - JWT_REFRESH_TOKEN_TIME=7
+
+      - REDIS_HOST=localhost
+      - REDIS_PORT=6379
+
+      - AWS_ACCESS_KEY=YCAJEQ0kT4hPUy3wcYuj-n-Jj
+      - AWS_SECRET_ACCESS_KEY=YCPnn9Yu_i1oVC95qERB6_tA0rRsKmkXYX_xaS05
+      - AWS_REGION=ru-central1
+      - AWS_BUCKET_NAME=mago-storage
+      - AWS_ENDPOINT_URL=https://storage.yandexcloud.net
+    ports:
+      - "8080:8080"
+
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8000 || exit 1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app-network
+    depends_on:
+      # rabbitmq:
+        # condition: service_healthy
+      db:
+        condition: service_healthy
+      # redis:
+        # condition: service_started
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge

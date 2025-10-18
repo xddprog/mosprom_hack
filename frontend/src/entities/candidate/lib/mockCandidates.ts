@@ -1,0 +1,310 @@
+import { Company, Vacancy } from "@/entities/vacancy/types/types";
+import { Candidate } from "../types/types";
+
+const companies: Company[] = [
+  {
+    id: "comp1",
+    name: "TechTrend Innovations",
+    icon_url: "/icons/techtrend.png",
+    industry: "Software Development",
+    site_url: "https://techtrend.com",
+  },
+  {
+    id: "comp2",
+    name: "DataWave Solutions",
+    icon_url: "/icons/datawave.png",
+    industry: "Data Analytics",
+    site_url: "https://datawave.com",
+  },
+  {
+    id: "comp3",
+    name: "CreativeHR Corp",
+    icon_url: "/icons/creativehr.png",
+    industry: "Human Resources",
+    site_url: "https://creativehr.com",
+  },
+  {
+    id: "comp4",
+    name: "CloudPeak Technologies",
+    icon_url: "/icons/cloudpeak.png",
+    industry: "Cloud Computing",
+    site_url: "https://cloudpeak.com",
+  },
+];
+
+const vacancies: Vacancy[] = [
+  {
+    id: 1,
+    company: companies[0],
+    post: "Frontend Developer",
+    salary: "$80,000 - $120,000",
+    tags: ["React", "TypeScript", "UI/UX"],
+    isFavorite: true,
+    region: "Москва",
+    responsibilities: {
+      title: "Key Responsibilities",
+      description: [
+        "Develop and maintain web applications using React and TypeScript.",
+        "Collaborate with designers to implement UI/UX designs.",
+        "Optimize application performance and ensure responsiveness.",
+      ],
+    },
+    requirements: {
+      title: "Requirements",
+      description: [
+        "3+ years of experience with React and TypeScript.",
+        "Strong understanding of JavaScript and CSS.",
+        "Experience with RESTful APIs.",
+      ],
+    },
+  },
+  {
+    id: 2,
+    company: companies[1],
+    post: "Data Scientist",
+    salary: "$90,000 - $140,000",
+    tags: ["Python", "Machine Learning", "Data Analysis"],
+    isFavorite: false,
+    region: "Москва",
+
+    responsibilities: {
+      title: "Key Responsibilities",
+      description: [
+        "Build and deploy machine learning models.",
+        "Analyze large datasets to extract insights.",
+        "Collaborate with data engineers to optimize data pipelines.",
+      ],
+    },
+    requirements: {
+      title: "Requirements",
+      description: [
+        "Master’s degree in Data Science or related field.",
+        "Proficiency in Python and SQL.",
+        "Experience with TensorFlow or PyTorch.",
+      ],
+    },
+  },
+  {
+    id: 3,
+    company: companies[2],
+    post: "HR Manager",
+    salary: "$70,000 - $100,000",
+    tags: ["Recruitment", "Employee Relations", "HR Strategy"],
+    isFavorite: false,
+    region: "Москва",
+
+    responsibilities: {
+      title: "Key Responsibilities",
+      description: [
+        "Manage recruitment and onboarding processes.",
+        "Develop HR policies and programs.",
+        "Handle employee relations and conflict resolution.",
+      ],
+    },
+    requirements: {
+      title: "Requirements",
+      description: [
+        "5+ years of HR experience.",
+        "Strong communication and leadership skills.",
+        "Knowledge of labor laws and regulations.",
+      ],
+    },
+  },
+  {
+    id: 4,
+    company: companies[0],
+    post: "Backend Developer",
+    salary: "$85,000 - $130,000",
+    tags: ["Python", "Alchemist", "PostgreSQL"],
+    isFavorite: true,
+    region: "Москва",
+
+    responsibilities: {
+      title: "Key Responsibilities",
+      description: [
+        "Develop and maintain server-side applications.",
+        "Design and implement RESTful APIs.",
+        "Ensure application scalability and security.",
+      ],
+    },
+    requirements: {
+      title: "Requirements",
+      description: [
+        "4+ years of experience with Node.js and Express.",
+        "Experience with MongoDB or similar databases.",
+        "Understanding of microservices architecture.",
+      ],
+    },
+  },
+  {
+    id: 5,
+    company: companies[3],
+    post: "Cloud Architect",
+    salary: "$100,000 - $160,000",
+    tags: ["AWS", "Azure", "Cloud Infrastructure"],
+    isFavorite: false,
+    responsibilities: {
+      title: "Key Responsibilities",
+      description: [
+        "Design and implement cloud-based solutions.",
+        "Optimize cloud infrastructure for performance and cost.",
+        "Collaborate with DevOps teams for deployments.",
+      ],
+    },
+    region: "Москва",
+    requirements: {
+      title: "Requirements",
+      description: [
+        "5+ years of experience in cloud architecture.",
+        "Expertise in AWS and/or Azure.",
+        "Strong problem-solving skills.",
+      ],
+    },
+  },
+];
+
+export const mockCandidatesKanban: Record<string, Candidate[]> = {
+  inReview: [
+    {
+      id: "2",
+      title: "Jane Smith",
+      vacancy: vacancies[1],
+      assignee: vacancies[1].post,
+      priority: "medium",
+      match: 60,
+      dueDate: "2023-09-02",
+    },
+    {
+      id: "5",
+      title: "Emily Davis",
+      vacancy: vacancies[4],
+      priority: "medium",
+      assignee: vacancies[4].post,
+      match: 72,
+      dueDate: "2023-09-05",
+    },
+    {
+      id: "8",
+      title: "James Lee",
+      vacancy: vacancies[3],
+      assignee: vacancies[3].post,
+      priority: "medium",
+      match: 65,
+      dueDate: "2023-09-08",
+    },
+    {
+      id: "11",
+      title: "Olivia Clark",
+      vacancy: vacancies[4],
+      assignee: vacancies[4].post,
+      priority: "medium",
+      match: 70,
+      dueDate: "2023-09-11",
+    },
+    {
+      id: "14",
+      title: "Daniel Hall",
+      vacancy: vacancies[4],
+      assignee: vacancies[4].post,
+      priority: "medium",
+      match: 75,
+      dueDate: "2023-09-14",
+    },
+  ],
+  screening: [],
+  interview: [],
+  offer: [
+    {
+      id: "1",
+      title: "John Doe",
+      vacancy: vacancies[0],
+      assignee: vacancies[0].post,
+      priority: "medium",
+      match: 85,
+      dueDate: "2023-09-01",
+    },
+    {
+      id: "4",
+      title: "Мариф Магомедов",
+      vacancy: vacancies[3],
+      assignee: vacancies[3].post,
+      priority: "medium",
+      match: 78,
+      dueDate: "2023-09-04",
+    },
+    {
+      id: "7",
+      title: "Sarah Taylor",
+      vacancy: vacancies[0],
+      assignee: vacancies[0].post,
+      priority: "medium",
+      match: 90,
+      dueDate: "2023-09-07",
+    },
+    {
+      id: "10",
+      title: "Robert Garcia",
+      vacancy: vacancies[0],
+      assignee: vacancies[0].post,
+      priority: "medium",
+      match: 82,
+      dueDate: "2023-09-10",
+    },
+    {
+      id: "13",
+      title: "Sophia Walker",
+      vacancy: vacancies[0],
+      assignee: vacancies[0].post,
+      priority: "medium",
+      match: 88,
+      dueDate: "2023-09-13",
+    },
+  ],
+  rejected: [
+    {
+      id: "3",
+      title: "Alice Johnson",
+      vacancy: vacancies[2],
+      assignee: vacancies[2].post,
+      priority: "medium",
+      match: 45,
+      dueDate: "2023-09-03",
+    },
+    {
+      id: "6",
+      title: "David Wilson",
+      vacancy: vacancies[4],
+      assignee: vacancies[4].post,
+      match: 55,
+      dueDate: "2023-09-06",
+      priority: "medium",
+    },
+    {
+      id: "9",
+      title: "Laura Martinez",
+      vacancy: vacancies[1],
+      assignee: vacancies[1].post,
+      match: 40,
+      dueDate: "2023-09-09",
+      priority: "medium",
+    },
+    {
+      id: "12",
+      title: "William Rodriguez",
+      vacancy: vacancies[1],
+      assignee: vacancies[1].post,
+      match: 50,
+      dueDate: "2023-09-12",
+      priority: "medium",
+    },
+    {
+      id: "15",
+      title: "Emma Young",
+      vacancy: vacancies[2],
+      assignee: vacancies[2].post,
+      match: 48,
+      dueDate: "2023-09-15",
+      priority: "medium",
+    },
+  ],
+};
