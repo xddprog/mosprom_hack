@@ -92,6 +92,16 @@ async def init_tables(session: AsyncSession):
     if check_exist:
         return
     
+    context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    admin = User(
+        full_name="Admin",
+        email="admin@admin.com",
+        password=context.hash("adminadmin"),
+        role=Role.ADMIN,
+        created_at=datetime.now(),
+        updated_at=datetime.now()
+    )
+    session.add(admin)
     current_date = datetime.now()
     
     # Создаем компании с разными датами

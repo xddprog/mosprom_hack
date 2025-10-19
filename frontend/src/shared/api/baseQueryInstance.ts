@@ -1,9 +1,10 @@
 import { refresh } from "@/entities/auth/api/authService";
+import { ERouteNames } from "@/shared";
 import axios, {
+  AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
-  AxiosError,
 } from "axios";
 import { RequestOptions } from "https";
 
@@ -26,6 +27,11 @@ export class AxiosClient {
     }
   }
 
+  private redirectToAuth() {
+    // Перенаправляем на страницу авторизации
+    window.location.href = `/${ERouteNames.AUTH_ROUTE}/${ERouteNames.LOGIN_ROUTE}`;
+  }
+
   public addAuthResponseInterceptor() {
     let isRefreshing = false;
     this.baseQueryV1Instance.interceptors.response.use(
@@ -33,7 +39,7 @@ export class AxiosClient {
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401  && !originalRequest._retry) {
           originalRequest._retry = true;
           if (isRefreshing) {
             await new Promise((resolve) => {
@@ -54,8 +60,15 @@ export class AxiosClient {
             return this.baseQueryV1Instance(originalRequest);
           } catch (error) {
             isRefreshing = false;
+            // Если не удалось обновить токен, перенаправляем на авторизацию
+            this.redirectToAuth();
             return Promise.reject(error);
           }
+        }
+
+        // Если это другая ошибка 401, перенаправляем на авторизацию
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          this.redirectToAuth();
         }
 
         return Promise.reject(error);

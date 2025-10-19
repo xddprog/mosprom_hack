@@ -1,9 +1,9 @@
-import { axiosAuth } from "@/shared/api/baseQueryInstance";
+import { axiosAuth, axiosNoAuth } from "@/shared/api/baseQueryInstance";
 import { Company, Profile } from "../types/types";
 
 class ProfileService {
   public async getCurrentProfile(): Promise<Profile> {
-    const { data } = await axiosAuth.get<Profile>("/auth/current_user");
+    const { data } = await axiosNoAuth.get<Profile>("/auth/current_user");
 
     return data;
   }

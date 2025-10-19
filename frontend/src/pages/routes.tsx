@@ -64,6 +64,10 @@ export const routes = createBrowserRouter([
         ),
         children: [
           {
+            path: ERouteNames.EMPTY_ROUTE,
+            element: <Navigate to={ERouteNames.DASHBOARD_ROUTE} replace />,
+          },
+          {
             path: ERouteNames.DASHBOARD_ROUTE,
             element: <Outlet />,
             children: [

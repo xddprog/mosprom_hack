@@ -1,6 +1,6 @@
-import { axiosNoAuth } from "@/shared/api/baseQueryInstance";
-import { LoginDto, RegisterDto } from "../types/types";
 import { Profile } from "@/entities/profile/types/types";
+import { axiosAuth, axiosNoAuth } from "@/shared/api/baseQueryInstance";
+import { LoginDto, RegisterDto } from "../types/types";
 
 class AuthService {
   public async adminLogin(loginDto: LoginDto): Promise<Profile> {
@@ -32,7 +32,11 @@ class AuthService {
 
     return data;
   }
+
+  public async logout(): Promise<void> {
+    await axiosAuth.delete("/auth/logout");
+  }
 }
 
-export const { adminLogin, userLogin, userRegister, refresh } =
+export const { adminLogin, userLogin, userRegister, refresh, logout } =
   new AuthService();

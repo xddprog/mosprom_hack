@@ -1,5 +1,6 @@
 // src/components/layout/AdminSidebar.tsx
 
+import { useLogoutMutation } from "@/entities/auth/hooks/useLogout";
 import { ERouteNames } from '@/shared';
 import { cn } from '@/shared/lib/utils/twMerge';
 import { BarChart3, Briefcase, Building, Clock, School } from 'lucide-react';
@@ -24,6 +25,11 @@ const navItems: NavItem[] = [
 export const AdminSidebar = () => {
     const location = useLocation();
     const currentPath = location.pathname.split('/').pop() || '';
+    const logoutMutation = useLogoutMutation();
+
+    const handleLogoutClick = () => {
+        logoutMutation.mutate();
+    };
 
     return (
         <div className="p-2">
