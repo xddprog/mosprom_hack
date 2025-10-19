@@ -10,6 +10,11 @@ class TagDTO(BaseModel):
     name: str
 
 
+class VacancyActivityDTO(BaseModel):
+    id: int
+    name: str
+    
+
 class VacancyBaseDTO(BaseModel):
     title: str
     min_salary: int

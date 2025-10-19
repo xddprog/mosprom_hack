@@ -19,4 +19,6 @@ export const enum ERouteNames {
   VACANCY_MANAGEMENT_ROUTE = "vacancy-management/:vacancyId",
   STUDENT_ROUTE = "student/:studentId",
   UNIVERSITY_INTERNSHIP_ROUTE = "university-internship",
+  RESIDENTS_RATING_ROUTE = "residents-rating",
+  COMPANY_DETAIL_ROUTE = "company/:companyId",
 }

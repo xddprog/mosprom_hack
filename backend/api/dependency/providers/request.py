@@ -77,6 +77,18 @@ class RequestProvider(Provider):
             university_repository=repositories.UniversityRepository(session)
         )
 
+    @provide(scope=Scope.REQUEST)
+    async def get_dashboard_service(self, session: AsyncSession) -> services.DashboardService:
+        return services.DashboardService(
+            dashboard_repository=repositories.DashboardRepository(session)
+        )
+
+    @provide(scope=Scope.REQUEST)
+    async def get_resident_rating_service(self, session: AsyncSession) -> services.ResidentRatingService:
+        return services.ResidentRatingService(
+            resident_rating_repository=repositories.ResidentRatingRepository(session)
+        )
+
 def require_role(allowed_roles: list[Role]):
     @inject
     async def dependency(
@@ -87,7 +99,6 @@ def require_role(allowed_roles: list[Role]):
         token = request.cookies.get("access_token")
         user, payload = await auth_service.verify_token(token)
         user_role_str = payload.get("role")
-        
         if not user_role_str:
             raise InvalidToken()
         if Role(user_role_str) not in allowed_roles:
