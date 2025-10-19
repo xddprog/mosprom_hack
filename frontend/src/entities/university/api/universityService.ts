@@ -48,7 +48,7 @@ class UniversityService {
   public async deleteStudentFromUniversity({
     student_id,
   }: {
-    student_id: string;
+    student_id: number;
   }) {
     try {
       return await axiosNoAuth.delete<Array<Student>>(

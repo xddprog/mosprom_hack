@@ -26,8 +26,12 @@ export const useUniversitySuggestions = (
 };
 
 export const useCreateStudent = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: createStudentInUniversity,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["university-students-list"] }),
   });
 };
 

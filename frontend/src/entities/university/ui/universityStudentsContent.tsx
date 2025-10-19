@@ -4,9 +4,16 @@ import { cn } from "@/shared/lib/utils/twMerge";
 import { Button } from "@/shared/ui";
 import { Input } from "@/shared/ui/input";
 import { UniversityStudentList } from "./universityStudentList";
+import {
+  useDeleteStudent,
+  useUniversityStudents,
+} from "../hooks/useUniversitySuggestions";
 
 export const UniversityStudentsContent = () => {
   const { setOpenModal } = useActions();
+
+  const { data: students = [] } = useUniversityStudents();
+  const { mutate: deleteStudent } = useDeleteStudent();
 
   const handleUniversityCreateModal = () => {
     setOpenModal({
@@ -35,8 +42,10 @@ export const UniversityStudentsContent = () => {
       </div>
       <div>
         <UniversityStudentList
+          students={students}
           className="bg-zinc-50"
           cardClassName="bg-zinc-100"
+          onDeleteStudent={(student_id) => deleteStudent({ student_id })}
           onCreateStudent={handleUniversityCreateModal}
         />
       </div>

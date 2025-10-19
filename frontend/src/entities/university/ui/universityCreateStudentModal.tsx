@@ -35,7 +35,7 @@ export const UniversityCreateStudentModal = () => {
         </DialogHeader>
 
         <div className="flex flex-col gap-4 py-2 pr-2">
-          <UniversityStudentCreateForm />
+          <UniversityStudentCreateForm onSuccess={handleClose} />
         </div>
       </DialogContent>
     </Dialog>

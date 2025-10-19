@@ -55,7 +55,9 @@ export const routes = createBrowserRouter([
         element: (
           <div className="space-y-10">
             <Header />
-            <Outlet />
+            <div>
+              <Outlet />
+            </div>
           </div>
         ),
         children: [

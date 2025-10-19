@@ -6,7 +6,7 @@ import { cn } from "@/shared/lib/utils/twMerge";
 interface StudentCardProps {
   student: Student;
   className?: string;
-  onDelete?: (studetnId: number) => void;
+  onDelete?: () => void;
 }
 
 export function StudentCard({
@@ -23,7 +23,7 @@ export function StudentCard({
     >
       {onDelete && (
         <button
-          onClick={() => onDelete(student.id)}
+          onClick={onDelete}
           className="absolute top-3 right-3 p-2 rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           aria-label="Удалить студента"
         >

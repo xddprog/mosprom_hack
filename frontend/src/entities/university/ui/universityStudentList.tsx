@@ -2,25 +2,23 @@ import React from "react";
 import { CreateVacancyCard } from "@/widgets/vacancyCard/vacancyCard";
 import { StudentCard } from "./universityStudentCard";
 import { cn } from "@/shared/lib/utils/twMerge";
-import {
-  useDeleteStudent,
-  useUniversityStudents,
-} from "../hooks/useUniversitySuggestions";
+import { Student } from "../types/types";
 
 interface UniversityStudentListProps {
+  students: Array<Student>;
   className?: string;
   cardClassName?: string;
+  onDeleteStudent: (studentId: number) => void;
   onCreateStudent: () => void;
 }
 
 export const UniversityStudentList: React.FC<UniversityStudentListProps> = ({
   className,
+  students,
   cardClassName,
   onCreateStudent,
+  onDeleteStudent,
 }) => {
-  const { data: students } = useUniversityStudents();
-  const { mutate: deleteStudent } = useDeleteStudent();
-
   return (
     <div className={cn("p-8 rounded-3xl", className)}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -32,7 +30,7 @@ export const UniversityStudentList: React.FC<UniversityStudentListProps> = ({
               key={student.id}
               student={student}
               className={cardClassName}
-              onDelete={() => {}}
+              onDelete={() => onDeleteStudent(student.id)}
             />
           ))}
       </div>

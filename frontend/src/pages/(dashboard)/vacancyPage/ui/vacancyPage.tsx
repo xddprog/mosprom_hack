@@ -19,7 +19,7 @@ const VacancyPage = () => {
   const handleBack = () => navigate(-1);
 
   return (
-    <Container className="text-black flex-col space-y-10 min-h-[calc(100vh-4rem)] pb-4">
+    <Container className="text-black flex-col space-y-10 pb-4">
       <section className="flex space-y-4 flex-col items-center">
         <section className="flex space-y-4 justify-start flex-col w-full p-5 rounded-3xl bg-white">
           <div className="flex space-x-4">
@@ -94,7 +94,6 @@ const VacancyPage = () => {
             (profile.role === EProfileRoles.UNIVERSITY ||
               profile.role === EProfileRoles.COMPANY) && (
               <div className="p-5 rounded-3xl bg-white space-y-3">
-                <h1 className="text-2xl">Подать анкеты студентов</h1>
                 <UniversityVacancyForm />
               </div>
             )}

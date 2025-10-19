@@ -45,7 +45,11 @@ const ToggleButtonGroup: React.FC<{
   </div>
 );
 
-export const UniversityStudentCreateForm = () => {
+export const UniversityStudentCreateForm = ({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}) => {
   const { data: vacancyTags } = useGetTags();
   const { mutate: createStudent } = useCreateStudent();
 
@@ -123,7 +127,7 @@ export const UniversityStudentCreateForm = () => {
     formData.append("resume", data.resume);
 
     createStudent({ studentFormData: formData });
-
+    onSuccess();
     reset();
   };
 
@@ -144,7 +148,7 @@ export const UniversityStudentCreateForm = () => {
     <div>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="flex">
+          <div className="flex gap-2">
             <FormField
               control={control}
               name="full_name"
@@ -205,7 +209,7 @@ export const UniversityStudentCreateForm = () => {
               )}
             />
           </div>
-          <div className="flex">
+          <div className="flex gap-2">
             <FormField
               control={control}
               name="resume"
@@ -270,7 +274,7 @@ export const UniversityStudentCreateForm = () => {
             />
           </div>
 
-          <div className="flex items-end">
+          <div className="flex items-end gap-2">
             <FormField
               control={control}
               name="faculty"
