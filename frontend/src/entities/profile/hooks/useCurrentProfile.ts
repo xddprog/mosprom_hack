@@ -1,3 +1,4 @@
+import { queryClient } from "@/shared/api/queryClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   getCompaniesList,
@@ -5,7 +6,6 @@ import {
   getCurrentProfile,
   updateCurrentProfile,
 } from "../api/profileService";
-import { queryClient } from "@/shared/api/queryClient";
 
 export const CURRENT_PROFILE_QUERY = "current-profile";
 export const COMPANY_LIST_QUERY = "company-list";

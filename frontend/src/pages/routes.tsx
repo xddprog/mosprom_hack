@@ -1,17 +1,21 @@
-import RootPage from "./(dashboard)/rootPage";
-import ErrorPage from "./(dashboard)/errorPage";
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
-import { lazy } from "react";
-import AuthPage from "./(auth)/authPage";
+import { vacancyDetailAction } from "@/entities/vacancy/actions/vacancyDetailAction";
+import { privatePage } from "@/entities/viewer/lib/hoc/privatePage";
 import { ERouteNames } from "@/shared";
 import { routesWithHoc } from "@/shared/lib/utils/routesWithHoc";
-import { privatePage } from "@/entities/viewer/lib/hoc/privatePage";
 import { Header } from "@/widgets/header/ui/header";
-import { vacancyDetailAction } from "@/entities/vacancy/actions/vacancyDetailAction";
+import { lazy } from "react";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import AuthPage from "./(auth)/authPage";
+import ErrorPage from "./(dashboard)/errorPage";
+import RootPage from "./(dashboard)/rootPage";
 
 const ApplicantPage = lazy(() => import("@/pages/(dashboard)/dashboardPage"));
 
 const AdminPage = lazy(() => import("@/pages/(admin)/adminPage"));
+const AdminDashboardPage = lazy(() => import("@/pages/(admin)/adminDashboardPage"));
+const ResidentsRatingPage = lazy(() => import("@/pages/(admin)/residentsRatingPage"));
+const CompanyDetailLayout = lazy(() => import("@/pages/(admin)/companyDetailLayout"));
+const CompanyDetailPage = lazy(() => import("@/pages/(admin)/companyDetailPage"));
 
 const UniversityPage = lazy(
   () => import("@/pages/(university)/universityPage")
@@ -61,6 +65,10 @@ export const routes = createBrowserRouter([
           </div>
         ),
         children: [
+          {
+            path: ERouteNames.EMPTY_ROUTE,
+            element: <Navigate to={ERouteNames.DASHBOARD_ROUTE} replace />,
+          },
           {
             path: ERouteNames.DASHBOARD_ROUTE,
             element: <Outlet />,
@@ -141,11 +149,15 @@ export const routes = createBrowserRouter([
             },
             {
               path: ERouteNames.DASHBOARD_ADMIN_ROUTE,
-              element: <Outlet />,
+              element: <AdminPage />,
               children: [
                 {
                   path: ERouteNames.EMPTY_ROUTE,
-                  element: <AdminPage />,
+                  element: <AdminDashboardPage />,
+                },
+                {
+                  path: ERouteNames.RESIDENTS_RATING_ROUTE,
+                  element: <ResidentsRatingPage />,
                 },
               ],
             },
@@ -168,6 +180,16 @@ export const routes = createBrowserRouter([
           {
             path: ERouteNames.LOGIN_ROUTE,
             element: <LoginPage />,
+          },
+        ],
+      },
+      {
+        path: ERouteNames.COMPANY_DETAIL_ROUTE,
+        element: <CompanyDetailLayout />,
+        children: [
+          {
+            path: ERouteNames.EMPTY_ROUTE,
+            element: <CompanyDetailPage />,
           },
         ],
       },

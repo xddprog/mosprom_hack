@@ -6,3 +6,5 @@ from backend.core.repositories.application_repository import ApplicationReposito
 from backend.core.repositories.student_repository import StudentRepository
 from backend.core.repositories.university_repository import UniversityRepository
 from backend.core.repositories.collective_application_repository import CollectiveApplicationRepository
+from backend.core.repositories.dashboard_repository import DashboardRepository
+from backend.core.repositories.resident_rating_repository import ResidentRatingRepository

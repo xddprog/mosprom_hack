@@ -6,7 +6,7 @@ export const Container = ({
   className,
 }: PropsWithChildren & { className: string }) => {
   return (
-    <div className={cn("mx-auto max-w-[1020px] w-full", className)}>
+    <div className={cn("mx-auto max-w-[1200px] w-full", className)}>
       {children}
     </div>
   );

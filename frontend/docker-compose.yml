@@ -10,6 +10,7 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - SKIP_TYPE_CHECK=true
     networks:
       - frontend-network
 

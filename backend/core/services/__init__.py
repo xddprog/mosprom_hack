@@ -7,3 +7,7 @@ from backend.core.services.application_service import ApplicationService
 from backend.core.services.student_service import StudentService
 from backend.core.services.collective_application_service import CollectiveApplicationService
 from backend.core.services.university_service import UniversityService
+from backend.core.services.dashboard_service import DashboardService
+from backend.core.services.resident_rating_service import ResidentRatingService
+from backend.core.repositories.dashboard_repository import DashboardRepository
+from backend.core.repositories.resident_rating_repository import ResidentRatingRepository
